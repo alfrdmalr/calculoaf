@@ -1,5 +1,12 @@
 {
   "compilerOptions": {
-    "jsx": "react"
+    "jsx": "react",
+    "module": "ESnext",
+    "target": "ES5",
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "strict": false,
+    "esModuleInterop": true,
+    "isolatedModules": true
   }
 }
