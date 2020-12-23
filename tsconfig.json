@@ -5,8 +5,18 @@
     "target": "ES5",
     "sourceMap": true,
     "moduleResolution": "node",
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
-    "isolatedModules": true
-  }
+    "isolatedModules": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true
+
+  },
+  "lib": [
+    "dom",
+    "dom.iterable",
+    "esnext"
+  ],
+  "include": ["src"]
+
 }

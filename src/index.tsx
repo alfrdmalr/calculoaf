@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {App} from './App';
 
 const container = document.querySelector("#app");
 
 ReactDOM.render(
-  <p>testing</p>,
+  <App />,
   container
 )

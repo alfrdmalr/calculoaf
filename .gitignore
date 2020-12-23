@@ -4,3 +4,5 @@ node_modules/
 # build files
 dist/
 .cache
+
+yarn-error*
