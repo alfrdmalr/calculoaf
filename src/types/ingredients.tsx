@@ -1,6 +1,7 @@
 export interface Ingredients {
-  levain?: number;
-  flour?: number;
-  water?: number
-  salt?: number
+  preFermentMass?: number;
+  flourMass?: number;
+  waterMass?: number
+  saltMass?: number
+  totalDoughMass?: number;
 }

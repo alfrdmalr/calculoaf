@@ -4,10 +4,10 @@ import './numberInput.module.css';
 export interface NumberInputProps {
   label: string;
   id: string;
-  value: number | undefined;
+  value: string | number | undefined;
   // undefined for empty; number (including NaN) for all other. Need to check
   // for NaN 
-  updateValue: (v: number | undefined) => void;
+  updateValue: (s: string) => void;
   disableInputMask?: boolean;
   liveUpdate?: boolean;
   cannotBeEmpty?: boolean;
@@ -40,24 +40,12 @@ export const NumberInput = (props: NumberInputProps) => {
     setVal(newVal);
 
     if (liveUpdate) {
-      update(newVal);
+      updateValue(newVal);
     }
-  }
-
-  const update = (s: string): void => {
-    if (s === "") {
-      updateValue(undefined);
-      return;
-    }
-    const parsedVal: number = parseFloat(s);
-
-    updateValue(parsedVal);
   }
 
   // onblur handler
   const validateInput = (s: string) => {
-    update(s);
-
     if (s === "") {
       if (cannotBeEmpty) {
         setError({
@@ -70,24 +58,23 @@ export const NumberInput = (props: NumberInputProps) => {
       return;
     }
 
+    updateValue(s);
+
     const parsedVal = parseFloat(s);
     // doesn't parse to a number
     if (isNaN(parsedVal)) {
-      console.log('nan', parsedVal)
       setError({
         state: true,
         msg: "Invalid number"
       })
-      console.log('invalid number, s, parsedVal', s, parsedVal, value);
       return;
     }
 
     if (min !== undefined && parsedVal < min) {
-      console.log('min', parsedVal)
       if (enforceBounds) {
         const minString = min.toString();
         setVal(minString);
-        update(minString);
+        updateValue(minString);
         setError({state: false});
         return;
       }
@@ -99,11 +86,10 @@ export const NumberInput = (props: NumberInputProps) => {
     }
 
     if (max !== undefined && parsedVal > max) {
-      console.log('max', parsedVal)
       if (enforceBounds) {
         const maxString = max.toString();
         setVal(maxString);
-        update(maxString);
+        updateValue(maxString);
         setError({state: false});
         return;
       }
@@ -117,7 +103,6 @@ export const NumberInput = (props: NumberInputProps) => {
     setError({ state: false});
   }
   useEffect(() => {
-    console.log('useeffect is happening:', value);
     if (value === undefined) {
       setVal("");
       return;

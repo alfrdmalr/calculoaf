@@ -1,40 +1,61 @@
-import React, {useState} from 'react';
+import React from 'react';
+import {Ingredients} from '../../types/ingredients';
 import {NumberInput} from '../numberInput';
 
-export interface IngredientsFormProps {}
+export interface IngredientsFormProps extends Ingredients {
+  updateIngredients: (f: Ingredients) => void;
+}
 
 export const IngredientsForm = (props: IngredientsFormProps) => {
-  const [preFerment, setPreFerment] = useState<number | undefined>()
-  const [flour, setFlour] = useState<number | undefined>()
-  const [water, setWater] = useState<number | undefined>()
-  const [salt, setSalt] = useState<number | undefined>()
+  const {updateIngredients, preFermentMass, flourMass, waterMass, saltMass} = props;
+
+  const updatePartial = (part: Partial<Ingredients>) => {
+    updateIngredients({
+      preFermentMass,
+      flourMass,
+      waterMass,
+      saltMass,
+      ...part
+    });
+  }
+
+  //todo
+  const unit: string = "g";
 
   return(
     <>
       <h2>Ingredients</h2>
       <NumberInput 
-        label={'Pre-Ferment (levain/starter)'}
+        label={`Pre-Ferment (${unit})`}
         id={'pre-ferment'}
-        value={preFerment}
-        updateValue={n => setPreFerment(n)}
+        value={preFermentMass}
+        updateValue={n => updatePartial({preFermentMass: parseFloat(n)})}
+        enforceBounds
+        min={0}
       />
       <NumberInput 
-        label={'Flour'}
-        id={'flour'}
-        value={flour}
-        updateValue={n => setFlour(n)}
-      />
-      <NumberInput 
-        label={'Water'}
+        label={`Water (${unit})`}
         id={'water'}
-        value={water}
-        updateValue={n => setWater(n)}
+        value={waterMass}
+        updateValue={n => updatePartial({waterMass: parseFloat(n)})}
+        enforceBounds
+        min={0}
       />
       <NumberInput 
-        label={'Salt'}
+        label={`Salt (${unit})`}
         id={'salt'}
-        value={salt}
-        updateValue={n => setSalt(n)}
+        value={saltMass}
+        updateValue={n => updatePartial({saltMass: parseFloat(n)})}
+        enforceBounds
+        min={0}
+      />
+      <NumberInput 
+        label={`Flour (${unit})`}
+        id={'flour'}
+        value={flourMass}
+        updateValue={n => updatePartial({flourMass: parseFloat(n)})}
+        enforceBounds
+        min={0}
       />
     </>
   )

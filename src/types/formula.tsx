@@ -1,5 +1,5 @@
 export interface Formula {
   hydrationPercent: number;
-  levainPercent: number;
+  preFermentPercent: number;
   saltPercent: number;
 }
