@@ -11,10 +11,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
 
   const updatePartial = (part: Partial<Ingredients>) => {
     updateIngredients({
-      preFermentMass,
-      flourMass,
-      waterMass,
-      saltMass,
+      ...props,
       ...part
     });
   }
