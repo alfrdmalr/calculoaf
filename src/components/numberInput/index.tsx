@@ -1,15 +1,13 @@
 import React, {useEffect, useState} from 'react';
+import {parseString} from '../../functions/parseString';
 import './numberInput.module.css';
 
 export interface NumberInputProps {
   label: string;
   id: string;
-  value: string | number | undefined;
-  // undefined for empty; number (including NaN) for all other. Need to check
-  // for NaN 
-  updateValue: (s: string) => void;
-  disableInputMask?: boolean;
-  liveUpdate?: boolean;
+  value: number | undefined;
+  // undefined for empty; number (including NaN) for all other.
+  updateValue: (n: number | undefined) => void;
   cannotBeEmpty?: boolean;
   min?: number;
   max?: number;
@@ -17,9 +15,10 @@ export interface NumberInputProps {
   step?: number;
 }
 
+// more flexible, uses string
 export const NumberInput = (props: NumberInputProps) => {
   const {label, id, value, updateValue, min, max, cannotBeEmpty, 
-    step, disableInputMask, liveUpdate, enforceBounds} = props;
+    step, enforceBounds} = props;
   const [val, setVal] = useState<string>("");
   const [error, setError] = useState<{state: boolean, msg?: string}>({state: false});
 
@@ -33,19 +32,12 @@ export const NumberInput = (props: NumberInputProps) => {
   }
 
   const onInputChange = (s: string): void => {
-    let newVal = s;
-    if (!disableInputMask) {
-      newVal = maskInput(s);
-    }
-    setVal(newVal);
-
-    if (liveUpdate) {
-      updateValue(newVal);
-    }
+    setVal(maskInput(s));
   }
 
-  // onblur handler
+  // runs on blur
   const validateInput = (s: string) => {
+    // empty case
     if (s === "") {
       if (cannotBeEmpty) {
         setError({
@@ -54,12 +46,12 @@ export const NumberInput = (props: NumberInputProps) => {
         });
         return;
       } 
+      updateValue(undefined);
       setError({state: false});
       return;
     }
 
-    updateValue(s);
-
+    //let re = /-?^[0-9]*[\.,]?[0-9]+$/; regex for valid number
     const parsedVal = parseFloat(s);
     // doesn't parse to a number
     if (isNaN(parsedVal)) {
@@ -67,14 +59,15 @@ export const NumberInput = (props: NumberInputProps) => {
         state: true,
         msg: "Invalid number"
       })
+      updateValue(undefined);
       return;
     }
 
+    updateValue(parseString(s));
+
     if (min !== undefined && parsedVal < min) {
       if (enforceBounds) {
-        const minString = min.toString();
-        setVal(minString);
-        updateValue(minString);
+        updateValue(min);
         setError({state: false});
         return;
       }
@@ -87,9 +80,7 @@ export const NumberInput = (props: NumberInputProps) => {
 
     if (max !== undefined && parsedVal > max) {
       if (enforceBounds) {
-        const maxString = max.toString();
-        setVal(maxString);
-        updateValue(maxString);
+        updateValue(max);
         setError({state: false});
         return;
       }
@@ -102,14 +93,15 @@ export const NumberInput = (props: NumberInputProps) => {
 
     setError({ state: false});
   }
+
   useEffect(() => {
     if (value === undefined) {
       setVal("");
       return;
     }
 
-    setVal(value.toString()); 
     validateInput(value.toString());
+    setVal(value.toString());
   }, [value])
 
   return(
