@@ -1,8 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {Button} from './components/button';
+import {DoughForm} from './components/doughForm';
 import {FormulaForm} from './components/formulaForm';
 import {IngredientsForm} from './components/ingredientsForm';
 import {NumberInput} from './components/numberInput';
+import {applyFormulaTDM} from './functions/applyFormula';
 import "./styles.css";
 import {Formula} from './types/formula';
 import {Ingredients} from './types/ingredients';
@@ -12,42 +14,56 @@ if (module.hot) {
 }
 
 export const App = () => {
-  const [ingredients, setIngredients] = useState<Ingredients>({})
+  const [totalDoughMass, setTotalDoughMass] = useState<number | undefined>(undefined);
+  const [ingredients, setIngredients] = useState<Ingredients>({});
   const [formula, setFormula] = useState<Formula>({
     hydrationPercent: 74,
     preFermentPercent: 25,
     saltPercent: 2
-  })
+  });
 
-  useEffect(() => {
-    if (ingredients.totalDoughMass !== undefined) {
-      setIngredients(applyFormulaTDM(formula, ingredients.totalDoughMass))
+  const updateIngredients = (i: Ingredients) => {
+    setIngredients(i);
+    if (validateIngredients(i)) {
+      const newTDM = i.saltMass + i.flourMass + i.waterMass + i.preFermentMass;
+      setTotalDoughMass(newTDM);
     }
-  }, [ingredients.totalDoughMass, formula])
+  }
 
-  useEffect(() => {
-    if (ingredients.saltMass !== undefined) {
-      setIngredients(applyFormulaSalt(formula, ingredients.saltMass))
+  const validateIngredients = (i: Ingredients): i is {
+      saltMass: number, 
+      flourMass: number, 
+      waterMass: number, 
+      preFermentMass: number
+  } => {
+    if (i.saltMass === undefined) {
+      return false;      
     }
-  }, [ingredients.saltMass, formula])
+    if (i.flourMass === undefined) {
+      return false;
+    }
+    if (i.waterMass === undefined) {
+      return false;
+    }
+    if (i.preFermentMass === undefined) {
+      return false;
+    }
+    return true;
+  }
   
-  useEffect(() => {
-    if (ingredients.flourMass !== undefined) {
-      setIngredients(applyFormula(formula, ingredients.flourMass))
+  const isValidFormula = (f: Formula): boolean => {
+    if (isNaN(f.saltPercent) || f.saltPercent === undefined) {
+      return false;
     }
-  }, [ingredients.flourMass, formula])
+    if (isNaN(f.hydrationPercent) || f.hydrationPercent === undefined) {
+      return false;
+    }
+    if (isNaN(f.preFermentPercent) || f.preFermentPercent === undefined) {
+      return false;
+    }
+    return true;
+  }
 
-  useEffect(() => {
-    if (ingredients.preFermentMass !== undefined) {
-      setIngredients(applyFormulaPreFerment(formula, ingredients.preFermentMass))
-    }
-  }, [ingredients.preFermentMass, formula])
-
-  useEffect(() => {
-    if (ingredients.waterMass !== undefined) {
-      setIngredients(applyFormulaWater(formula, ingredients.waterMass))
-    }
-  }, [ingredients.waterMass, formula])
 
   return(
     <div className="main">
@@ -56,100 +72,37 @@ export const App = () => {
       <NumberInput 
         label={"Total Dough Mass"}
         id={'dough-mass'}
-        value={ingredients.totalDoughMass}
-        updateValue={n => {
-          setIngredients({
-            ...ingredients,
-            totalDoughMass: parseFloat(n)
-          });
-        }}
+        value={totalDoughMass}
+        min={0}
+        enforceBounds
+        updateValue={(n) => setTotalDoughMass(n)}
       />
       <Button 
         label={"Apply Formula"}
-        disabled={!ingredients.totalDoughMass}
-        onClick={() => setIngredients(applyFormulaTDM(formula, ingredients.totalDoughMass as number))}
+        disabled={!totalDoughMass || !isValidFormula(formula)}
+        onClick={() => setIngredients(applyFormulaTDM(formula, totalDoughMass as number))}
       />
       <div className="forms">
         <div className="form-container">
           <IngredientsForm 
-            updateIngredients={setIngredients}
-            {...ingredients}
+            formula={formula}
+            updateIngredients={updateIngredients}
+            ingredients={ingredients}
           />
         </div>
         <div className="form-container">
           <FormulaForm 
             updateFormula={setFormula}
-            {...formula}
+            formula={formula}
           />
         </div>
+      </div>
+      <div className="form-container">
+        <DoughForm 
+          {...ingredients}
+          updateIngredients={setIngredients}
+        />
       </div>
     </div>
   )
 }
-
-function applyFormulaTDM(formula: Formula, totalDoughMass: number): Ingredients {
-  const hydrationDecimal = formula.hydrationPercent / 100;
-  const preFermentDecimal = formula.preFermentPercent / 100;
-  const saltDecimal = formula.saltPercent / 100;
-  if (totalDoughMass < 1) {
-    throw new Error("Dough mass must be at least 1 gram.")
-  }
-
-  const flourMass = totalDoughMass / (1 + (hydrationDecimal + saltDecimal + preFermentDecimal));
-  return applyFormula(formula, flourMass);
-}
-
-function applyFormulaPreFerment(formula: Formula, preFermentMass: number): Ingredients {
-  const preFermentDecimal = formula.preFermentPercent / 100;
-  const flourMass = preFermentMass / preFermentDecimal;
-  return applyFormula(formula, flourMass)
-}
-
-function applyFormulaSalt(formula: Formula, saltMass: number): Ingredients {
-  const saltDecimal = formula.saltPercent / 100;
-  const flourMass = saltMass / saltDecimal;
-  return applyFormula(formula, flourMass)
-}
-
-function applyFormulaWater(formula: Formula, waterMass: number): Ingredients {
-  const waterDecimal = formula.hydrationPercent / 100;
-  const flourMass = waterMass / waterDecimal;
-  return applyFormula(formula, flourMass)
-}
-
-// assumes valid formula
-export function applyFormula(formula: Formula, flourMass: number): Ingredients {  
-  const hydrationDecimal = formula.hydrationPercent / 100;
-  const preFermentDecimal = formula.preFermentPercent / 100;
-  const saltDecimal = formula.saltPercent / 100;
-  
-  const saltMass = flourMass * saltDecimal;
-  const preFermentMass = flourMass * preFermentDecimal;
-  const waterMass = flourMass * hydrationDecimal; // not strictly true since the levain has some water
-  
-  return {
-    saltMass,
-    preFermentMass,
-    flourMass,
-    waterMass,
-    totalDoughMass: flourMass + saltMass + waterMass + preFermentMass
-  }
-} 
-
-
-// general formula:
-// TDM = water + flour + salt + levain
-// both water and flour can be expressed in terms of hydration and the other:
-// water = flour * hydration
-// flour = water / hydration
-// meaning we only need one of these terms to generate a full set of
-// ingredients, provided we have a formula (and a tdm)
-//
-// for example:
-// flour = (TDM - salt - levain) / (1 + hydration)
-// even better, we can get flour from just a TDM and recipe:
-// TDM = FLOUR + FLOUR*water% + FLOUR*salt% + FLOUR*levain%
-// so FLOUR = TDM / (1 + (waterPercent + saltPercent + preFermentPercent))
-// hydration is a bit trickier though...
-// we can still always find the flour percentage though
-// if we don't have a TDM, we can just backcalculate the total flour amount from any single ingredient, because bakers percentage

@@ -6,9 +6,11 @@ export interface NumberInputProps {
   label: string;
   id: string;
   value: number | undefined;
-  // undefined for empty; number (including NaN) for all other.
   updateValue: (n: number | undefined) => void;
   cannotBeEmpty?: boolean;
+  required?: boolean;
+  disableInputMask?: boolean;
+  precision?: number;
   min?: number;
   max?: number;
   enforceBounds?: boolean;
@@ -18,7 +20,7 @@ export interface NumberInputProps {
 // more flexible, uses string
 export const NumberInput = (props: NumberInputProps) => {
   const {label, id, value, updateValue, min, max, cannotBeEmpty, 
-    step, enforceBounds} = props;
+    step, enforceBounds, required, disableInputMask, precision} = props;
   const [val, setVal] = useState<string>("");
   const [error, setError] = useState<{state: boolean, msg?: string}>({state: false});
 
@@ -32,21 +34,27 @@ export const NumberInput = (props: NumberInputProps) => {
   }
 
   const onInputChange = (s: string): void => {
+    if (disableInputMask) {
+      setVal(s);
+      return;
+    }
     setVal(maskInput(s));
   }
 
   // runs on blur
   const validateInput = (s: string) => {
+    setError({ state: false});
+    updateValue(parseString(s));
+
     // empty case
     if (s === "") {
-      if (cannotBeEmpty) {
+      if (required) {
         setError({
           state: true,
           msg: "Field must not be empty"
         });
         return;
       } 
-      updateValue(undefined);
       setError({state: false});
       return;
     }
@@ -58,16 +66,15 @@ export const NumberInput = (props: NumberInputProps) => {
       setError({
         state: true,
         msg: "Invalid number"
-      })
-      updateValue(undefined);
+      });
       return;
     }
 
-    updateValue(parseString(s));
-
     if (min !== undefined && parsedVal < min) {
+      console.log('less than min')
       if (enforceBounds) {
         updateValue(min);
+        setVal(min.toString());
         setError({state: false});
         return;
       }
@@ -81,6 +88,7 @@ export const NumberInput = (props: NumberInputProps) => {
     if (max !== undefined && parsedVal > max) {
       if (enforceBounds) {
         updateValue(max);
+        setVal(max.toString());
         setError({state: false});
         return;
       }
@@ -90,18 +98,16 @@ export const NumberInput = (props: NumberInputProps) => {
       })
       return;
     }
-
-    setError({ state: false});
   }
 
   useEffect(() => {
     if (value === undefined) {
       setVal("");
+      validateInput("");
       return;
     }
-
-    validateInput(value.toString());
     setVal(value.toString());
+    validateInput(value.toString());
   }, [value])
 
   return(
@@ -121,14 +127,27 @@ export const NumberInput = (props: NumberInputProps) => {
         id={id}
         inputMode={'numeric'}
         type='tel' 
-        pattern={"^-?[0-9]+[\.,]?[0-9]*$"}
+        pattern={"(^-?[0-9]+[\.,]?[0-9]*$)|(^-?[0-9]*[\.,]?[0-9]+$)"}
         value={val} 
         max={max}
         min={min}
         step={step || 0.1}
         onChange={e => onInputChange(e.currentTarget.value)}
+        onKeyDown={(e: React.KeyboardEvent) => {
+          // if (disableMask) {
+          //    return;
+          // }
+          if (val !== "NaN") {
+            return;
+          }
+
+          if (e.code === "Backspace" || e.code === "Delete") {
+            //special case, treat "NaN" as single character
+            setVal("");
+          }
+        }}
         onBlur={() => validateInput(val)}
-        required={cannotBeEmpty}
+        required={required}
         aria-describedby={`${id}-error`}
       />
     </>
