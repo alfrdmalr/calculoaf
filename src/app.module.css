@@ -13,7 +13,7 @@
   width: 100%;
 }
 
-.form-container {
+.formContainer {
   display: flex;
   flex-direction: column;
   align-items: start;

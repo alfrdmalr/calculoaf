@@ -1,30 +1,34 @@
 import React, {useEffect, useState} from 'react';
-import {parseString} from '../../functions/parseString';
-import './numberInput.module.css';
+import styles from './numberInput.module.css';
+
+export interface ValidatorPayload {
+  input: number;
+  errorMsg?: string;
+  allowContinue?: boolean;
+}
 
 export interface NumberInputProps {
   label: string;
   id: string;
   value: number | undefined;
+  disabled?: boolean;
   updateValue: (n: number | undefined) => void;
-  cannotBeEmpty?: boolean;
+  customValidator?: (input: string) => ValidatorPayload;
   required?: boolean;
   disableInputMask?: boolean;
   precision?: number;
   min?: number;
   max?: number;
   enforceBounds?: boolean;
-  step?: number;
 }
 
-// more flexible, uses string
 export const NumberInput = (props: NumberInputProps) => {
-  const {label, id, value, updateValue, min, max, cannotBeEmpty, 
-    step, enforceBounds, required, disableInputMask, precision} = props;
+  const {label, id, value, updateValue, min, max,
+    enforceBounds, required, disableInputMask, precision,
+    customValidator, disabled } = props;
   const [val, setVal] = useState<string>("");
   const [error, setError] = useState<{state: boolean, msg?: string}>({state: false});
 
-  // onchange/input handler
   const maskInput = (s: string): string => {
     let re = /^-?[0-9]*[\.,]?[0-9]*$/;
     if (re.test(s)) {
@@ -41,63 +45,120 @@ export const NumberInput = (props: NumberInputProps) => {
     setVal(maskInput(s));
   }
 
-  // runs on blur
-  const validateInput = (s: string) => {
-    setError({ state: false});
-    updateValue(parseString(s));
+  const handleEmpty = () => {
+    updateValue(undefined);
+    if (required) {
+      setError({
+        state: true,
+        msg: "Field must not be empty"
+      });
+      return;
+    } 
+    setError({state: false});
+    return;
+  }
 
-    // empty case
-    if (s === "") {
-      if (required) {
-        setError({
-          state: true,
-          msg: "Field must not be empty"
-        });
-        return;
-      } 
+  const handleNaN = () => {
+    setError({
+      state: true,
+      msg: "Invalid number"
+    });
+    return;
+  }
+
+  const updateNumber = (n: number) => {
+    let updateNum = n;
+    let updateStr = n.toString();
+
+    if (precision) {
+      updateStr = n.toFixed(precision);
+      updateNum = parseFloat(updateStr);
+    }
+
+    setVal(updateStr);
+    updateValue(updateNum);
+  }
+
+  const handleMin = (minNum: number) => {
+    if (enforceBounds) {
+      updateNumber(minNum);
       setError({state: false});
       return;
     }
+    setError({
+      state: true,
+      msg: `Value must not be less than ${minNum}.` 
+    })
+    return;
+  }
+  
+  const handleMax = (maxNum: number) => {
+    if (enforceBounds) {
+      updateValue(max);
+      setVal(maxNum.toString());
+      setError({state: false});
+      return;
+    }
+    setError({
+      state: true,
+      msg: `Value must not be greater than ${maxNum}.`
+    })
+    return;
+  }
 
-    //let re = /-?^[0-9]*[\.,]?[0-9]+$/; regex for valid number
-    const parsedVal = parseFloat(s);
-    // doesn't parse to a number
-    if (isNaN(parsedVal)) {
+  const handleCustom = (v: ValidatorPayload): boolean => {
+    const {input, errorMsg, allowContinue}: ValidatorPayload = v;
+
+    updateNumber(input);
+
+    if (errorMsg) {
       setError({
         state: true,
-        msg: "Invalid number"
+        msg: errorMsg
       });
+    }
+
+    if (!allowContinue) {
+      return false;  
+    }
+
+    return true;
+  }
+
+  // runs on blur
+  const validateInput = (s: string) => {
+    // empty case
+    if (s === "") {
+      handleEmpty();
       return;
     }
 
-    if (min !== undefined && parsedVal < min) {
-      console.log('less than min')
-      if (enforceBounds) {
-        updateValue(min);
-        setVal(min.toString());
-        setError({state: false});
+    if (customValidator) {
+      const keepValidating = handleCustom(customValidator(s));
+      if (!keepValidating) {
         return;
       }
-      setError({
-        state: true,
-        msg: `Value must not be less than ${min}.` 
-      })
+    }
+    
+    const parsedVal = parseFloat(s);
+
+    // doesn't parse to a number
+    if (isNaN(parsedVal)) {
+      handleNaN();
+      return;
+    }
+    
+    if (min !== undefined && parsedVal < min) {
+      handleMin(min);
       return;
     }
 
     if (max !== undefined && parsedVal > max) {
-      if (enforceBounds) {
-        updateValue(max);
-        setVal(max.toString());
-        setError({state: false});
-        return;
-      }
-      setError({
-        state: true,
-        msg: `Value must not be greater than ${max}.`
-      })
+      handleMax(max);
       return;
     }
+
+    updateNumber(parsedVal);
   }
 
   useEffect(() => {
@@ -110,15 +171,17 @@ export const NumberInput = (props: NumberInputProps) => {
     validateInput(value.toString());
   }, [value])
 
+
+
   return(
-    <>
+    <div className={styles.container}>
       <label htmlFor={id}>
         {label}
       </label>
       {error.state &&
         <p 
           id={`${id}-error`}
-          className={'errorMsg'}
+          className={styles.errorMsg}
         >
           {error.msg}
         </p>
@@ -131,17 +194,18 @@ export const NumberInput = (props: NumberInputProps) => {
         value={val} 
         max={max}
         min={min}
-        step={step || 0.1}
+        disabled={disabled}
         onChange={e => onInputChange(e.currentTarget.value)}
-        onKeyDown={(e: React.KeyboardEvent) => {
-          // if (disableMask) {
-          //    return;
-          // }
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (disableInputMask) {
+            return;
+          }
           if (val !== "NaN") {
             return;
           }
-
-          if (e.code === "Backspace" || e.code === "Delete") {
+          // using 'nativeEvent.code' because react's syntheticevent does not
+          // yet have the 'code' property
+          if (e.nativeEvent.code === "Backspace" || e.nativeEvent.code === "Delete") {
             //special case, treat "NaN" as single character
             setVal("");
           }
@@ -150,6 +214,6 @@ export const NumberInput = (props: NumberInputProps) => {
         required={required}
         aria-describedby={`${id}-error`}
       />
-    </>
+    </div>
   )
 }

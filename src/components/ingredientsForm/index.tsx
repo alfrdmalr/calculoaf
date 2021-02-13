@@ -17,25 +17,25 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
   //todo
   const unit: string = "g";
 
-  const adjustIngredients = (n: string, ingredientPercent: number): void => {
-    if (n === "") {
+  const adjustIngredients = (n: number | undefined, ingredientPercent: number): void => {
+    if (n === undefined) {
       updateIngredients({})
       return;
     }
-    const val = parseFloat(n);
-    if (isNaN(val)) {
+    if (isNaN(n)) {
       //todo ERROR
       return;
     }
 
-    const flourMass: number = getFlourMass(val, ingredientPercent);
+    // this needs special handler for waterr, which has amore complex calc
+    const flourMass: number = getFlourMass(n, ingredientPercent);
     const adjustedIngredients: Ingredients = applyFormula(formula, flourMass);   
     updateIngredients(adjustedIngredients);
   }
 
   return(
     <>
-      <h2>Total Ingredients</h2>
+      <h2>Ingredients</h2>
       <NumberInput 
         label={`Pre-Ferment (${unit})`}
         id={'pre-ferment'}

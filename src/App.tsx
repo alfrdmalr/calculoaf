@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import {Button} from './components/button';
-import {DoughForm} from './components/doughForm';
+import {TotalIngredients} from './components/totalIngredients';
 import {FormulaForm} from './components/formulaForm';
 import {IngredientsForm} from './components/ingredientsForm';
 import {NumberInput} from './components/numberInput';
 import {applyFormulaTDM} from './functions/applyFormula';
-import "./styles.css";
+import styles from "./app.module.css";
 import {Formula} from './types/formula';
 import {Ingredients} from './types/ingredients';
 
@@ -66,7 +66,7 @@ export const App = () => {
 
 
   return(
-    <div className="main">
+    <div className={styles.main}>
       <h1>Calculoaf</h1>
       <p>A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa.</p>
       <NumberInput 
@@ -82,25 +82,24 @@ export const App = () => {
         disabled={!totalDoughMass || !isValidFormula(formula)}
         onClick={() => setIngredients(applyFormulaTDM(formula, totalDoughMass as number))}
       />
-      <div className="forms">
-        <div className="form-container">
+      <div className={styles.forms}>
+        <div className={styles.formContainer}>
           <IngredientsForm 
             formula={formula}
             updateIngredients={updateIngredients}
             ingredients={ingredients}
           />
         </div>
-        <div className="form-container">
+        <div className={styles.formContainer}>
           <FormulaForm 
             updateFormula={setFormula}
             formula={formula}
           />
         </div>
       </div>
-      <div className="form-container">
-        <DoughForm 
-          {...ingredients}
-          updateIngredients={setIngredients}
+      <div className={styles.formContainer}>
+        <TotalIngredients 
+          ingredients={ingredients}
         />
       </div>
     </div>
