@@ -47,7 +47,7 @@ export function applyFormulaTDM(formula: Formula, totalDoughMass: number): Ingre
 // flour = (TDM - salt - levain) / (1 + hydration)
 // even better, we can get flour from just a TDM and recipe:
 // TDM = FLOUR + FLOUR*water% + FLOUR*salt% + FLOUR*levain%
-// so FLOUR = TDM / (1 + (waterPercent + saltPercent + preFermentPercent))
+// so FLOUR = TDM / (1 + (waterPercent + saltPercent + preFermentPercent + ...))
 // hydration is a bit trickier though...
 // we can still always find the flour percentage though
 // if we don't have a TDM, we can just backcalculate the total flour amount from any single ingredient, because bakers percentage

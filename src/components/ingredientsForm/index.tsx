@@ -1,23 +1,23 @@
 import React from 'react';
 import {applyFormula, getFlourMass} from '../../functions/applyFormula';
 import {Formula} from '../../types/formula';
-import {Ingredients} from '../../types/ingredients';
 import {NumberInput} from '../numberInput';
 
 export interface IngredientsFormProps {
-  ingredients: Ingredients
-  updateIngredients: (i: Ingredients) => void;
+  totalDoughMass: number;
+  setTotalDoughMass: (n: number) => void;
   formula: Formula;
 }
 
 export const IngredientsForm = (props: IngredientsFormProps) => {
-  const {updateIngredients, ingredients, formula } = props;
-  const { preFermentMass, flourMass, waterMass, saltMass } = ingredients;
+  const {setTotalDoughMass, totalDoughMass, formula } = props;
+  const { levainPercent, hydrationPercent, saltPercent } = formula;
+  const waterPercent = hydrationPercent - 
 
   //todo
   const unit: string = "g";
 
-  const adjustIngredients = (n: number | undefined, ingredientPercent: number): void => {
+  const adjin = (n: number | undefined, ingredientPercent: number): void => {
     if (n === undefined) {
       updateIngredients({})
       return;
@@ -32,6 +32,14 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
     const adjustedIngredients: Ingredients = applyFormula(formula, flourMass);   
     updateIngredients(adjustedIngredients);
   }
+
+  const levainMass: number = totalDoughMass * levainPercent;
+  const saltMass: number = totalDoughMass * saltPercent;
+
+  let levainHydration: number = 100;
+
+  const waterPercent = hydrationPercent - waterFromLevain(levainHydration, percentLevain);
+
 
   return(
     <>
@@ -71,3 +79,8 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
     </>
   )
 }
+
+function waterFromLevain(levainHydration: number, percentLevain: number) {
+  const ratio: number = levainHydration / (levainHydration + 100); //total levain ingredients
+  return percentLevain * ratio;
+} 

@@ -7,7 +7,6 @@ import {NumberInput} from './components/numberInput';
 import {applyFormulaTDM} from './functions/applyFormula';
 import styles from "./app.module.css";
 import {Formula} from './types/formula';
-import {Ingredients} from './types/ingredients';
 
 if (module.hot) {
   module.hot.accept();
