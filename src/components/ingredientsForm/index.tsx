@@ -12,7 +12,7 @@ export interface IngredientsFormProps {
 
 export const IngredientsForm = (props: IngredientsFormProps) => {
   const {updateIngredients, ingredients, formula } = props;
-  const { preFermentMass, flourMass, waterMass, saltMass } = ingredients;
+  const { levainMass, flourMass, waterMass, saltMass } = ingredients;
 
   //todo
   const unit: string = "g";
@@ -39,8 +39,8 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
       <NumberInput 
         label={`Pre-Ferment (${unit})`}
         id={'pre-ferment'}
-        value={preFermentMass}
-        updateValue={(n) => adjustIngredients(n, formula.preFermentPercent)}
+        value={levainMass}
+        updateValue={(n) => adjustIngredients(n, formula.levainPercent)}
         enforceBounds
         min={0}
       />

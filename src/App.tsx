@@ -15,13 +15,14 @@ if (module.hot) {
 
 export const App = () => {
   const [totalDoughMass, setTotalDoughMass] = useState<number | undefined>(undefined);
-  const [ingredients, setIngredients] = useState<Ingredients>({});
+  const [ingredients, setIngredients] = useState<Ingredients>();
   const [formula, setFormula] = useState<Formula>({
     hydrationPercent: 74,
-    preFermentPercent: 25,
+    levainPercent: 25,
     saltPercent: 2
   });
 
+  /*
   const updateIngredients = (i: Ingredients) => {
     setIngredients(i);
     if (validateIngredients(i)) {
@@ -50,6 +51,7 @@ export const App = () => {
     }
     return true;
   }
+  */
   
   const isValidFormula = (f: Formula): boolean => {
     if (isNaN(f.saltPercent) || f.saltPercent === undefined) {
@@ -58,12 +60,11 @@ export const App = () => {
     if (isNaN(f.hydrationPercent) || f.hydrationPercent === undefined) {
       return false;
     }
-    if (isNaN(f.preFermentPercent) || f.preFermentPercent === undefined) {
+    if (isNaN(f.levainPercent) || f.levainPercent === undefined) {
       return false;
     }
     return true;
   }
-
 
   return(
     <div className={styles.main}>
@@ -84,11 +85,14 @@ export const App = () => {
       />
       <div className={styles.forms}>
         <div className={styles.formContainer}>
+          ingredientsform goes here 
+          {/*
           <IngredientsForm 
             formula={formula}
             updateIngredients={updateIngredients}
             ingredients={ingredients}
           />
+            */}
         </div>
         <div className={styles.formContainer}>
           <FormulaForm 
@@ -98,9 +102,12 @@ export const App = () => {
         </div>
       </div>
       <div className={styles.formContainer}>
+        total ingredients will go here
+        {/*
         <TotalIngredients 
           ingredients={ingredients}
         />
+         */}
       </div>
     </div>
   )
