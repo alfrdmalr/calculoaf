@@ -102,8 +102,8 @@ export const App = () => {
         </div>
       </div>
       <div className={styles.formContainer}>
-        total ingredients will go here
         {/*
+        total ingredients will go here
         <TotalIngredients 
           ingredients={ingredients}
         />
