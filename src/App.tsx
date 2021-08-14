@@ -14,7 +14,7 @@ if (module.hot) {
 }
 
 export const App = () => {
-  const [totalDoughMass, setTotalDoughMass] = useState<number | undefined>(undefined);
+  const [totalDoughMass, setTotalDoughMass] = useState<number>();
   const [ingredients, setIngredients] = useState<Ingredients>();
   const [formula, setFormula] = useState<Formula>({
     hydrationPercent: 74,
@@ -22,11 +22,14 @@ export const App = () => {
     saltPercent: 2
   });
 
-  /*
-  const updateIngredients = (i: Ingredients) => {
+  const updateIngredients = (i: Ingredients | null) => {
+    if (i === null) {
+      setIngredients(undefined);
+      return;
+    }
     setIngredients(i);
     if (validateIngredients(i)) {
-      const newTDM = i.saltMass + i.flourMass + i.waterMass + i.preFermentMass;
+      const newTDM = i.saltMass + i.flourMass + i.waterMass + i.levainMass;
       setTotalDoughMass(newTDM);
     }
   }
@@ -35,7 +38,7 @@ export const App = () => {
       saltMass: number, 
       flourMass: number, 
       waterMass: number, 
-      preFermentMass: number
+      levainMass: number
   } => {
     if (i.saltMass === undefined) {
       return false;      
@@ -46,12 +49,11 @@ export const App = () => {
     if (i.waterMass === undefined) {
       return false;
     }
-    if (i.preFermentMass === undefined) {
+    if (i.levainMass === undefined) {
       return false;
     }
     return true;
   }
-  */
   
   const isValidFormula = (f: Formula): boolean => {
     if (isNaN(f.saltPercent) || f.saltPercent === undefined) {
@@ -76,6 +78,7 @@ export const App = () => {
         value={totalDoughMass}
         min={0}
         enforceBounds
+        precision={2}
         updateValue={(n) => setTotalDoughMass(n)}
       />
       <Button 
@@ -85,14 +88,11 @@ export const App = () => {
       />
       <div className={styles.forms}>
         <div className={styles.formContainer}>
-          ingredientsform goes here 
-          {/*
           <IngredientsForm 
             formula={formula}
             updateIngredients={updateIngredients}
             ingredients={ingredients}
           />
-            */}
         </div>
         <div className={styles.formContainer}>
           <FormulaForm 

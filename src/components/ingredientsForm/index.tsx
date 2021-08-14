@@ -5,21 +5,23 @@ import {Ingredients} from '../../types/ingredients';
 import {NumberInput} from '../numberInput';
 
 export interface IngredientsFormProps {
-  ingredients: Ingredients
-  updateIngredients: (i: Ingredients) => void;
+  ingredients: Ingredients | undefined;
+  updateIngredients: (i: Ingredients | null) => void;
   formula: Formula;
 }
 
 export const IngredientsForm = (props: IngredientsFormProps) => {
   const {updateIngredients, ingredients, formula } = props;
-  const { levainMass, flourMass, waterMass, saltMass } = ingredients;
+  const { levainMass, flourMass, waterMass, saltMass } = ingredients || {
+    levainMass: undefined, flourMass: undefined, waterMass: undefined, saltMass: undefined
+  };
 
   //todo
   const unit: string = "g";
 
   const adjustIngredients = (n: number | undefined, ingredientPercent: number): void => {
     if (n === undefined) {
-      updateIngredients({})
+      updateIngredients(null)
       return;
     }
     if (isNaN(n)) {
@@ -42,6 +44,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         value={levainMass}
         updateValue={(n) => adjustIngredients(n, formula.levainPercent)}
         enforceBounds
+        precision={2}
         min={0}
       />
       <NumberInput 
@@ -50,6 +53,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         value={waterMass}
         updateValue={(n) => adjustIngredients(n, formula.hydrationPercent)}
         enforceBounds
+        precision={2}
         min={0}
       />
       <NumberInput 
@@ -58,6 +62,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         value={saltMass}
         updateValue={(n) => adjustIngredients(n, formula.saltPercent)}
         enforceBounds
+        precision={2}
         min={0}
       />
       <NumberInput 
@@ -66,6 +71,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         value={flourMass}
         updateValue={(n) => adjustIngredients(n, 100)}
         enforceBounds
+        precision={2}
         min={0}
       />
     </>

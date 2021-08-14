@@ -9,7 +9,7 @@ export interface FormulaFormProps {
 
 export const FormulaForm = (props: FormulaFormProps) => {
   const {updateFormula, formula} = props;
-  const {hydrationPercent, preFermentPercent, saltPercent} = formula;
+  const {hydrationPercent, levainPercent, saltPercent} = formula;
   const updatePartial = (part: Partial<Formula>) => {
     updateFormula({
       ...formula,
@@ -24,8 +24,8 @@ export const FormulaForm = (props: FormulaFormProps) => {
       <NumberInput 
         label={`Pre-Ferment (${unit})`}
         id={'pre-ferment-formula'}
-        value={preFermentPercent}
-        updateValue={n => updatePartial({preFermentPercent: n})}
+        value={levainPercent}
+        updateValue={n => updatePartial({levainPercent: n})}
         required
         enforceBounds
         min={0}

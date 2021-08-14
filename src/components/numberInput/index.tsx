@@ -63,6 +63,7 @@ export const NumberInput = (props: NumberInputProps) => {
       state: true,
       msg: "Invalid number"
     });
+    setVal("");
     return;
   }
 
@@ -159,6 +160,7 @@ export const NumberInput = (props: NumberInputProps) => {
     }
 
     updateNumber(parsedVal);
+    setError({state: false})
   }
 
   useEffect(() => {
@@ -170,8 +172,6 @@ export const NumberInput = (props: NumberInputProps) => {
     setVal(value.toString());
     validateInput(value.toString());
   }, [value])
-
-
 
   return(
     <div className={styles.container}>
