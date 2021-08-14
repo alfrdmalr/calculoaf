@@ -5,7 +5,6 @@ import {IngredientsForm} from './components/ingredientsForm';
 import styles from "./app.module.css";
 import {Formula} from './types/formula';
 import {Ingredients} from './types/ingredients';
-import {TotalDoughModule} from './components/totalDoughModule';
 import {NumberInput} from './components/numberInput';
 import {applyFormulaTDM} from './functions/applyFormula';
 
@@ -93,12 +92,6 @@ export const App = () => {
           />
         </div>
       </div>
-      <TotalDoughModule
-        totalDoughMass={totalDoughMass}
-        setTotalDoughMass={setTotalDoughMass}
-        formula={formula}
-        updateIngredients={setIngredients}
-      />
       <div className={styles.formContainer}>
         {/*
         total ingredients will go here
