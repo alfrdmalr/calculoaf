@@ -17,3 +17,15 @@ export interface MixinPercentages {
   [mixinPercent: string]: number;
 }
 
+export const isValidFormula = (f: Formula): boolean => {
+  if (isNaN(f.saltPercent) || f.saltPercent === undefined) {
+    return false;
+  }
+  if (isNaN(f.hydrationPercent) || f.hydrationPercent === undefined) {
+    return false;
+  }
+  if (isNaN(f.levainPercent) || f.levainPercent === undefined) {
+    return false;
+  }
+  return true;
+}

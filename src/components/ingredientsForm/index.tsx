@@ -29,7 +29,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
       return;
     }
 
-    // this needs special handler for waterr, which has amore complex calc
+    // this needs special handler for water, which has amore complex calc
     const flourMass: number = getFlourMass(n, ingredientPercent);
     const adjustedIngredients: Ingredients = applyFormula(formula, flourMass);   
     updateIngredients(adjustedIngredients);

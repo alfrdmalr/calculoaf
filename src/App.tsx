@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
-import {Button} from './components/button';
 import {TotalIngredients} from './components/totalIngredients';
 import {FormulaForm} from './components/formulaForm';
 import {IngredientsForm} from './components/ingredientsForm';
-import {NumberInput} from './components/numberInput';
-import {applyFormulaTDM} from './functions/applyFormula';
 import styles from "./app.module.css";
 import {Formula} from './types/formula';
 import {Ingredients} from './types/ingredients';
+import {TotalDoughModule} from './components/totalDoughModule';
+import {NumberInput} from './components/numberInput';
+import {applyFormulaTDM} from './functions/applyFormula';
 
 if (module.hot) {
   module.hot.accept();
@@ -54,20 +54,14 @@ export const App = () => {
     }
     return true;
   }
-  
-  const isValidFormula = (f: Formula): boolean => {
-    if (isNaN(f.saltPercent) || f.saltPercent === undefined) {
-      return false;
-    }
-    if (isNaN(f.hydrationPercent) || f.hydrationPercent === undefined) {
-      return false;
-    }
-    if (isNaN(f.levainPercent) || f.levainPercent === undefined) {
-      return false;
-    }
-    return true;
-  }
 
+  const handleDoughMass = (n: number | undefined) => {
+    if (n === undefined) {
+      setIngredients(undefined); 
+      return;
+    }
+    setIngredients(applyFormulaTDM(formula, n))
+  }
   return(
     <div className={styles.main}>
       <h1>Calculoaf</h1>
@@ -79,12 +73,10 @@ export const App = () => {
         min={0}
         enforceBounds
         precision={2}
-        updateValue={(n) => setTotalDoughMass(n)}
-      />
-      <Button 
-        label={"Apply Formula"}
-        disabled={!totalDoughMass || !isValidFormula(formula)}
-        onClick={() => setIngredients(applyFormulaTDM(formula, totalDoughMass as number))}
+        updateValue={(n) => {
+          setTotalDoughMass(n)
+          handleDoughMass(n);
+        }}
       />
       <div className={styles.forms}>
         <div className={styles.formContainer}>
@@ -101,6 +93,12 @@ export const App = () => {
           />
         </div>
       </div>
+      <TotalDoughModule
+        totalDoughMass={totalDoughMass}
+        setTotalDoughMass={setTotalDoughMass}
+        formula={formula}
+        updateIngredients={setIngredients}
+      />
       <div className={styles.formContainer}>
         {/*
         total ingredients will go here
