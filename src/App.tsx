@@ -66,7 +66,7 @@ export const App = () => {
     <div className={styles.main}>
       <h1>Calculoaf</h1>
       <p>A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa.</p>
-      <NumberInput 
+      <b><NumberInput 
         label={"Total Dough Mass"}
         id={'dough-mass'}
         value={totalDoughMass}
@@ -77,7 +77,7 @@ export const App = () => {
           setTotalDoughMass(n)
           handleDoughMass(n);
         }}
-      />
+      /></b>
       <div className={styles.forms}>
         <div className={styles.formContainer}>
           <IngredientsForm 
