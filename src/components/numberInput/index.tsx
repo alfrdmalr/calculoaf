@@ -1,219 +1,147 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import { Numberish, isValid } from '../../types/numberish';
 import styles from './numberInput.module.css';
 
-export interface ValidatorPayload {
-  input: number;
-  errorMsg?: string;
-  allowContinue?: boolean;
-}
-
-export interface NumberInputProps {
-  label: string;
-  id: string;
-  value: number | undefined;
-  disabled?: boolean;
-  updateValue: (n: number | undefined) => void;
-  customValidator?: (input: string) => ValidatorPayload;
-  required?: boolean;
-  disableInputMask?: boolean;
-  precision?: number;
-  min?: number;
-  max?: number;
-  enforceBounds?: boolean;
-}
+export interface NumberInputProps extends Omit<React.DetailedHTMLProps<
+  React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>, 'value' > {
+    value: Numberish;
+    setValue: (value: Numberish) => void;
+    label: string | JSX.Element;
+    id: string;
+    disabled?: boolean;
+    required?: boolean;
+    precision?: number;
+    min?: number;
+    max?: number;
+    enforceBounds?: boolean;
+    allowNegative?: boolean;
+  }
 
 export const NumberInput = (props: NumberInputProps) => {
-  const {label, id, value, updateValue, min, max,
-    enforceBounds, required, disableInputMask, precision,
-    customValidator, disabled } = props;
-  const [val, setVal] = useState<string>("");
-  const [error, setError] = useState<{state: boolean, msg?: string}>({state: false});
+  const {
+    id,
+    value,
+    setValue,
+    label,
+    precision,
+    required,
+    enforceBounds,
+    min, 
+    max,
+    allowNegative,
+    ...rest
+  } = props;
 
-  const maskInput = (s: string): string => {
-    let re = /^-?[0-9]*[\.,]?[0-9]*$/;
-    if (re.test(s)) {
-      return s;
-    }
-    return val;
-  }
+  const [displayValue, setDisplayValue] = useState<string>("");
+  const [internalValue, setInternalValue] = useState<Numberish>(null);
+  const [error, setError] = useState<boolean>(false);
 
-  const onInputChange = (s: string): void => {
-    if (disableInputMask) {
-      setVal(s);
+  const pattern = useMemo(() => {
+    return RegExp(`^${allowNegative ? '-?' : ''}[0-9]*[\.,]?[0-9]*$`);
+  }, [allowNegative]);
+
+  const isValidFormat = useCallback((s: string) => {
+    return pattern.test(s);
+  }, [pattern])
+
+  const updateInternalValue = useCallback((n: Numberish) => {
+    if (!isValid(n)) {
+      setInternalValue(n);
       return;
     }
-    setVal(maskInput(s));
-  }
-
-  const handleEmpty = () => {
-    updateValue(undefined);
-    if (required) {
-      setError({
-        state: true,
-        msg: "Field must not be empty"
-      });
+    if (max != null && n > max) {
+      if (enforceBounds) {
+        setInternalValue(max);
+      } else {
+        setError(true);
+      }
       return;
     } 
-    setError({state: false});
-    return;
-  }
 
-  const handleNaN = () => {
-    setError({
-      state: true,
-      msg: "Invalid number"
-    });
-    setVal("");
-    return;
-  }
-
-  const updateNumber = (n: number) => {
-    let updateNum = n;
-    let updateStr = n.toString();
-
-    if (precision) {
-      updateStr = n.toFixed(precision);
-      updateNum = parseFloat(updateStr);
-    }
-
-    setVal(updateStr);
-    updateValue(updateNum);
-  }
-
-  const handleMin = (minNum: number) => {
-    if (enforceBounds) {
-      updateNumber(minNum);
-      setError({state: false});
-      return;
-    }
-    setError({
-      state: true,
-      msg: `Value must not be less than ${minNum}.` 
-    })
-    return;
-  }
-  
-  const handleMax = (maxNum: number) => {
-    if (enforceBounds) {
-      updateValue(max);
-      setVal(maxNum.toString());
-      setError({state: false});
-      return;
-    }
-    setError({
-      state: true,
-      msg: `Value must not be greater than ${maxNum}.`
-    })
-    return;
-  }
-
-  const handleCustom = (v: ValidatorPayload): boolean => {
-    const {input, errorMsg, allowContinue}: ValidatorPayload = v;
-
-    updateNumber(input);
-
-    if (errorMsg) {
-      setError({
-        state: true,
-        msg: errorMsg
-      });
-    }
-
-    if (!allowContinue) {
-      return false;  
-    }
-
-    return true;
-  }
-
-  // runs on blur
-  const validateInput = (s: string) => {
-    // empty case
-    if (s === "") {
-      handleEmpty();
+    if (min != null && n < min) {
+      if (enforceBounds) {
+        setInternalValue(min);
+      } else {
+        setError(true);
+      }
       return;
     }
 
-    if (customValidator) {
-      const keepValidating = handleCustom(customValidator(s));
-      if (!keepValidating) {
-        return;
+    setInternalValue(n);
+  }, [enforceBounds, min, max]);
+
+  // handle valid input strings
+  const onDisplayChange = useCallback((input: string) => {
+    setDisplayValue(input);
+    if (input === "") {
+      setInternalValue(null);
+    } else {
+      const n: number = parseFloat(input);
+      if (n !== internalValue) {
+        updateInternalValue(n); 
       }
     }
-    
-    const parsedVal = parseFloat(s);
+  }, [internalValue]);
 
-    // doesn't parse to a number
-    if (isNaN(parsedVal)) {
-      handleNaN();
-      return;
+  // handle raw changes to the component
+  const onInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const val: string = e.target.value;
+    if (isValidFormat(val)) {
+      onDisplayChange(val);
     }
-    
-    if (min !== undefined && parsedVal < min) {
-      handleMin(min);
-      return;
+  }, [isValidFormat, displayValue]);
+
+  // update prop.value on blur; should trigger format indirectly via effect
+  const onBlur = useCallback(() => {
+    setValue(internalValue);
+  }, [setValue, internalValue]);
+
+  // formatting callback; if 'live' updating, can't do ToFixed
+  const getDisplayValue = useCallback((n: Numberish) => {
+    if (n === null) {
+      return "";
+    } else if (isNaN(n)) {
+      return displayValue;
+    } else {
+      return n.toFixed(precision);
     }
+  }, [displayValue]);
 
-    if (max !== undefined && parsedVal > max) {
-      handleMax(max);
-      return;
+  const handleError = useCallback((value: Numberish) => {
+    if (value === null) {
+      setError(!!required);
+    } else if (isNaN(value)) {
+      setError(true);
+    } else {
+      setError(false);
     }
+  }, [required]);
 
-    updateNumber(parsedVal);
-    setError({state: false})
-  }
-
+  // format and adjust ground truth whenever we receieve an updated prop value
   useEffect(() => {
-    if (value === undefined) {
-      setVal("");
-      validateInput("");
-      return;
-    }
-    setVal(value.toString());
-    validateInput(value.toString());
-  }, [value])
+    setDisplayValue(getDisplayValue(value))
+    updateInternalValue(value);
 
-  return(
+    handleError(value);
+  }, [value]);
+
+  return (
     <div className={styles.container}>
       <label htmlFor={id}>
         {label}
       </label>
-      {error.state &&
-        <p 
-          id={`${id}-error`}
-          className={styles.errorMsg}
-        >
-          {error.msg}
-        </p>
-      }
-      <input 
-        id={id}
-        inputMode={'numeric'}
-        type='tel' 
-        pattern={"(^-?[0-9]+[\.,]?[0-9]*$)|(^-?[0-9]*[\.,]?[0-9]+$)"}
-        value={val} 
-        max={max}
-        min={min}
-        disabled={disabled}
-        onChange={e => onInputChange(e.currentTarget.value)}
-        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (disableInputMask) {
-            return;
-          }
-          if (val !== "NaN") {
-            return;
-          }
-          // using 'nativeEvent.code' because react's syntheticevent does not
-          // yet have the 'code' property
-          if (e.nativeEvent.code === "Backspace" || e.nativeEvent.code === "Delete") {
-            //special case, treat "NaN" as single character
-            setVal("");
-          }
-        }}
-        onBlur={() => validateInput(val)}
+      <input
+        {...rest}
         required={required}
+        type="text"
+        className={error ? styles.error : ''}
+        inputMode="numeric"
+        pattern={pattern.toString()}
+        onChange={onInputChange}
+        onBlur={onBlur}
+        value={displayValue}
         aria-describedby={`${id}-error`}
       />
-    </div>
-  )
+  </div>
+);
 }

@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {Formula} from '../../types/formula';
+import { Nullable } from '../../types/nullable';
+import { Numberish } from '../../types/numberish';
 import {NumberInput} from '../numberInput';
 
 export interface FormulaFormProps {
-  formula: Formula;
-  updateFormula: (f: Formula) => void;
+  formula: Nullable<Formula>;
+  updateFormula: (f: Nullable<Formula>) => void;
 }
 
 export const FormulaForm = (props: FormulaFormProps) => {
   const {updateFormula, formula} = props;
   const {hydrationPercent, levainPercent, saltPercent} = formula;
-  const updatePartial = (part: Partial<Formula>) => {
-    updateFormula({
+
+  const updateFormulaParameter = useCallback((key: keyof Formula, n: Numberish) => {
+    const f: Nullable<Formula> = {
       ...formula,
-      ...part
-    });
-  }
+      [key]: n
+    };
+
+    updateFormula(f);
+  }, [formula, updateFormula]);
+
   const unit = '%';
 
   return(
@@ -25,7 +31,7 @@ export const FormulaForm = (props: FormulaFormProps) => {
         label={`Pre-Ferment (${unit})`}
         id={'pre-ferment-formula'}
         value={levainPercent}
-        updateValue={n => updatePartial({levainPercent: n})}
+        setValue={n => updateFormulaParameter('levainPercent', n)}
         required
         enforceBounds
         min={0}
@@ -35,7 +41,7 @@ export const FormulaForm = (props: FormulaFormProps) => {
         label={`Hydration (${unit})`}
         id={'hydration'}
         value={hydrationPercent}
-        updateValue={n => updatePartial({hydrationPercent: n})}
+        setValue={n => updateFormulaParameter('hydrationPercent', n)}
         required
         enforceBounds
         min={0}
@@ -45,7 +51,7 @@ export const FormulaForm = (props: FormulaFormProps) => {
         label={`Salt (${unit})`}
         id={'salt'}
         value={saltPercent}
-        updateValue={n => updatePartial({saltPercent: n})}
+        setValue={n => updateFormulaParameter('saltPercent', n)}
         required
         enforceBounds
         min={0}
