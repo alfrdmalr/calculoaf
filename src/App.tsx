@@ -1,82 +1,66 @@
-import React, {useState} from 'react';
-import {TotalIngredients} from './components/totalIngredients';
+import React, {useCallback, useEffect, useState} from 'react';
 import {FormulaForm} from './components/formulaForm';
 import {IngredientsForm} from './components/ingredientsForm';
 import styles from "./app.module.css";
-import {Formula} from './types/formula';
-import {Ingredients} from './types/ingredients';
+import {Formula, validateFormula} from './types/formula';
+import {emptyIngredients, Ingredients, validateIngredients} from './types/ingredients';
 import {NumberInput} from './components/numberInput';
 import {applyFormulaTDM} from './functions/applyFormula';
+import { Nullable } from './types/nullable';
+import { isValid, Numberish } from './types/numberish';
+import { TotalIngredients } from './components/totalIngredients';
 
 if (module.hot) {
   module.hot.accept();
 }
 
 export const App = () => {
-  const [totalDoughMass, setTotalDoughMass] = useState<number>();
-  const [ingredients, setIngredients] = useState<Ingredients>();
-  const [formula, setFormula] = useState<Formula>({
-    hydrationPercent: 74,
+  const [totalDoughMass, setTotalDoughMass] = useState<Numberish>(null);
+  const [ingredients, setIngredients] = useState<Nullable<Ingredients>>(emptyIngredients());
+  const [formula, setFormula] = useState<Nullable<Formula>>({
+    hydrationPercent: 80,
     levainPercent: 25,
     saltPercent: 2
   });
 
-  const updateIngredients = (i: Ingredients | null) => {
-    if (i === null) {
-      setIngredients(undefined);
-      return;
-    }
+  const updateIngredients = useCallback((i: Nullable<Ingredients>) => {
+    // needs to be already adjusted 
     setIngredients(i);
     if (validateIngredients(i)) {
       const newTDM = i.saltMass + i.flourMass + i.waterMass + i.levainMass;
       setTotalDoughMass(newTDM);
+    } else {
+      setTotalDoughMass(null);
     }
-  }
+  }, [validateIngredients]);
 
-  const validateIngredients = (i: Ingredients): i is {
-      saltMass: number, 
-      flourMass: number, 
-      waterMass: number, 
-      levainMass: number
-  } => {
-    if (i.saltMass === undefined) {
-      return false;      
+  useEffect(() => {
+    if (!validateFormula(formula) || 
+      !isValid(totalDoughMass)) {
+      setIngredients(emptyIngredients());
+    } else {
+      setIngredients(applyFormulaTDM(formula, totalDoughMass));
     }
-    if (i.flourMass === undefined) {
-      return false;
-    }
-    if (i.waterMass === undefined) {
-      return false;
-    }
-    if (i.levainMass === undefined) {
-      return false;
-    }
-    return true;
-  }
+  }, [formula, totalDoughMass]);
 
-  const handleDoughMass = (n: number | undefined) => {
-    if (n === undefined) {
-      setIngredients(undefined); 
-      return;
-    }
-    setIngredients(applyFormulaTDM(formula, n))
-  }
   return(
     <div className={styles.main}>
       <h1>Calculoaf</h1>
       <p>A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa.</p>
-      <b><NumberInput 
-        label={"Total Dough Mass"}
-        id={'dough-mass'}
-        value={totalDoughMass}
-        min={0}
-        enforceBounds
-        precision={2}
-        updateValue={(n) => {
-          setTotalDoughMass(n)
-          handleDoughMass(n);
-        }}
-      /></b>
+        <NumberInput 
+            label={
+            <>
+              <span className="fas fa-star" />
+              <b> Total Dough Mass</b>
+            </>
+            }
+          id={'dough-mass'}
+          value={totalDoughMass}
+          min={0}
+          enforceBounds
+          precision={0}
+          setValue={setTotalDoughMass}
+        />
       <div className={styles.forms}>
         <div className={styles.formContainer}>
           <IngredientsForm 
@@ -93,12 +77,9 @@ export const App = () => {
         </div>
       </div>
       <div className={styles.formContainer}>
-        {/*
-        total ingredients will go here
         <TotalIngredients 
           ingredients={ingredients}
         />
-         */}
       </div>
     </div>
   )
