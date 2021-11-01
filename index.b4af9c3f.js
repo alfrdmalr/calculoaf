@@ -22896,56 +22896,50 @@ var _formulaForm = require("./components/formulaForm");
 var _ingredientsForm = require("./components/ingredientsForm");
 var _appModuleCss = require("./app.module.css");
 var _appModuleCssDefault = parcelHelpers.interopDefault(_appModuleCss);
+var _formula = require("./types/formula");
+var _ingredients = require("./types/ingredients");
 var _numberInput = require("./components/numberInput");
 var _applyFormula = require("./functions/applyFormula");
+var _numberish = require("./types/numberish");
+var _totalIngredients = require("./components/totalIngredients");
 var _s = $RefreshSig$();
 if (module.hot) module.hot.accept();
 const App = ()=>{
     _s();
-    const [totalDoughMass, setTotalDoughMass] = _react.useState();
-    const [ingredients, setIngredients] = _react.useState();
+    const [totalDoughMass, setTotalDoughMass] = _react.useState(null);
+    const [ingredients, setIngredients] = _react.useState(_ingredients.emptyIngredients());
     const [formula, setFormula] = _react.useState({
-        hydrationPercent: 74,
+        hydrationPercent: 80,
         levainPercent: 25,
         saltPercent: 2
     });
-    const updateIngredients = (i)=>{
-        if (i === null) {
-            setIngredients(undefined);
-            return;
-        }
+    const updateIngredients = _react.useCallback((i)=>{
+        // needs to be already adjusted 
         setIngredients(i);
-        if (validateIngredients(i)) {
+        if (_ingredients.validateIngredients(i)) {
             const newTDM = i.saltMass + i.flourMass + i.waterMass + i.levainMass;
             setTotalDoughMass(newTDM);
-        }
-    };
-    const validateIngredients = (i)=>{
-        if (i.saltMass === undefined) return false;
-        if (i.flourMass === undefined) return false;
-        if (i.waterMass === undefined) return false;
-        if (i.levainMass === undefined) return false;
-        return true;
-    };
-    const handleDoughMass = (n)=>{
-        if (n === undefined) {
-            setIngredients(undefined);
-            return;
-        }
-        setIngredients(_applyFormula.applyFormulaTDM(formula, n));
-    };
+        } else setTotalDoughMass(null);
+    }, [_ingredients.validateIngredients]);
+    _react.useEffect(()=>{
+        if (!_formula.validateFormula(formula) || !_numberish.isValid(totalDoughMass)) setIngredients(_ingredients.emptyIngredients());
+        else setIngredients(_applyFormula.applyFormulaTDM(formula, totalDoughMass));
+    }, [
+        formula,
+        totalDoughMass
+    ]);
     return(/*#__PURE__*/ _jsxRuntime.jsxs("div", {
         className: _appModuleCssDefault.default.main,
         __source: {
             fileName: "src/App.tsx",
-            lineNumber: 65
+            lineNumber: 47
         },
         __self: undefined,
         children: [
             /*#__PURE__*/ _jsxRuntime.jsx("h1", {
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 66
+                    lineNumber: 48
                 },
                 __self: undefined,
                 children: "Calculoaf"
@@ -22953,40 +22947,39 @@ const App = ()=>{
             /*#__PURE__*/ _jsxRuntime.jsx("p", {
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 67
+                    lineNumber: 49
                 },
                 __self: undefined,
                 children: "A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa."
             }),
-            /*#__PURE__*/ _jsxRuntime.jsx("b", {
+            /*#__PURE__*/ _jsxRuntime.jsx(_numberInput.NumberInput, {
+                label: /*#__PURE__*/ _jsxRuntime.jsxs(_jsxRuntime.Fragment, {
+                    children: [
+                        /*#__PURE__*/ _jsxRuntime.jsx("span", {
+                            className: "fas fa-star"
+                        }),
+                        /*#__PURE__*/ _jsxRuntime.jsx("b", {
+                            children: " Total Dough Mass"
+                        })
+                    ]
+                }),
+                id: 'dough-mass',
+                value: totalDoughMass,
+                min: 0,
+                enforceBounds: true,
+                precision: 0,
+                setValue: setTotalDoughMass,
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 68
+                    lineNumber: 50
                 },
-                __self: undefined,
-                children: /*#__PURE__*/ _jsxRuntime.jsx(_numberInput.NumberInput, {
-                    label: "Total Dough Mass",
-                    id: 'dough-mass',
-                    value: totalDoughMass,
-                    min: 0,
-                    enforceBounds: true,
-                    precision: 2,
-                    updateValue: (n)=>{
-                        setTotalDoughMass(n);
-                        handleDoughMass(n);
-                    },
-                    __source: {
-                        fileName: "src/App.tsx",
-                        lineNumber: 68
-                    },
-                    __self: undefined
-                })
+                __self: undefined
             }),
             /*#__PURE__*/ _jsxRuntime.jsxs("div", {
                 className: _appModuleCssDefault.default.forms,
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 80
+                    lineNumber: 64
                 },
                 __self: undefined,
                 children: [
@@ -22994,7 +22987,7 @@ const App = ()=>{
                         className: _appModuleCssDefault.default.formContainer,
                         __source: {
                             fileName: "src/App.tsx",
-                            lineNumber: 81
+                            lineNumber: 65
                         },
                         __self: undefined,
                         children: /*#__PURE__*/ _jsxRuntime.jsx(_ingredientsForm.IngredientsForm, {
@@ -23003,7 +22996,7 @@ const App = ()=>{
                             ingredients: ingredients,
                             __source: {
                                 fileName: "src/App.tsx",
-                                lineNumber: 82
+                                lineNumber: 66
                             },
                             __self: undefined
                         })
@@ -23012,7 +23005,7 @@ const App = ()=>{
                         className: _appModuleCssDefault.default.formContainer,
                         __source: {
                             fileName: "src/App.tsx",
-                            lineNumber: 88
+                            lineNumber: 72
                         },
                         __self: undefined,
                         children: /*#__PURE__*/ _jsxRuntime.jsx(_formulaForm.FormulaForm, {
@@ -23020,7 +23013,7 @@ const App = ()=>{
                             formula: formula,
                             __source: {
                                 fileName: "src/App.tsx",
-                                lineNumber: 89
+                                lineNumber: 73
                             },
                             __self: undefined
                         })
@@ -23031,14 +23024,22 @@ const App = ()=>{
                 className: _appModuleCssDefault.default.formContainer,
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 95
+                    lineNumber: 79
                 },
-                __self: undefined
+                __self: undefined,
+                children: /*#__PURE__*/ _jsxRuntime.jsx(_totalIngredients.TotalIngredients, {
+                    ingredients: ingredients,
+                    __source: {
+                        fileName: "src/App.tsx",
+                        lineNumber: 80
+                    },
+                    __self: undefined
+                })
             })
         ]
     }));
 };
-_s(App, "d2SZf3MF3TzqF/RjW7zSYPv7Us0=");
+_s(App, "6J1fVPTO1BwKQj5aPKdWorDK0EI=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
@@ -23048,7 +23049,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./components/formulaForm":"02R9T","./components/ingredientsForm":"diqgc","./app.module.css":"5VQky","./components/numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./functions/applyFormula":"k9vVM"}],"02R9T":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./components/formulaForm":"02R9T","./components/ingredientsForm":"diqgc","./app.module.css":"5VQky","./components/numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./functions/applyFormula":"k9vVM","./types/formula":"feNKI","./types/ingredients":"3rwsI","./types/numberish":"hWu61","./components/totalIngredients":"8IPwX"}],"02R9T":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$4c55 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23060,23 +23061,30 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "FormulaForm", ()=>FormulaForm
 );
 var _jsxRuntime = require("react/jsx-runtime");
+var _react = require("react");
 var _numberInput = require("../numberInput");
+var _s = $RefreshSig$();
 const FormulaForm = (props)=>{
+    _s();
     const { updateFormula , formula  } = props;
     const { hydrationPercent , levainPercent , saltPercent  } = formula;
-    const updatePartial = (part)=>{
-        updateFormula({
+    const updateFormulaParameter = _react.useCallback((key, n)=>{
+        const f = {
             ...formula,
-            ...part
-        });
-    };
+            [key]: n
+        };
+        updateFormula(f);
+    }, [
+        formula,
+        updateFormula
+    ]);
     const unit = '%';
     return(/*#__PURE__*/ _jsxRuntime.jsxs(_jsxRuntime.Fragment, {
         children: [
             /*#__PURE__*/ _jsxRuntime.jsx("h2", {
                 __source: {
                     fileName: "src/components/formulaForm/index.tsx",
-                    lineNumber: 23
+                    lineNumber: 29
                 },
                 __self: undefined,
                 children: "Formula"
@@ -23085,9 +23093,7 @@ const FormulaForm = (props)=>{
                 label: `Pre-Ferment (${unit})`,
                 id: 'pre-ferment-formula',
                 value: levainPercent,
-                updateValue: (n)=>updatePartial({
-                        levainPercent: n
-                    })
+                setValue: (n)=>updateFormulaParameter('levainPercent', n)
                 ,
                 required: true,
                 enforceBounds: true,
@@ -23095,7 +23101,7 @@ const FormulaForm = (props)=>{
                 max: 100,
                 __source: {
                     fileName: "src/components/formulaForm/index.tsx",
-                    lineNumber: 24
+                    lineNumber: 30
                 },
                 __self: undefined
             }),
@@ -23103,9 +23109,7 @@ const FormulaForm = (props)=>{
                 label: `Hydration (${unit})`,
                 id: 'hydration',
                 value: hydrationPercent,
-                updateValue: (n)=>updatePartial({
-                        hydrationPercent: n
-                    })
+                setValue: (n)=>updateFormulaParameter('hydrationPercent', n)
                 ,
                 required: true,
                 enforceBounds: true,
@@ -23113,7 +23117,7 @@ const FormulaForm = (props)=>{
                 max: 100,
                 __source: {
                     fileName: "src/components/formulaForm/index.tsx",
-                    lineNumber: 34
+                    lineNumber: 40
                 },
                 __self: undefined
             }),
@@ -23121,9 +23125,7 @@ const FormulaForm = (props)=>{
                 label: `Salt (${unit})`,
                 id: 'salt',
                 value: saltPercent,
-                updateValue: (n)=>updatePartial({
-                        saltPercent: n
-                    })
+                setValue: (n)=>updateFormulaParameter('saltPercent', n)
                 ,
                 required: true,
                 enforceBounds: true,
@@ -23131,13 +23133,14 @@ const FormulaForm = (props)=>{
                 max: 100,
                 __source: {
                     fileName: "src/components/formulaForm/index.tsx",
-                    lineNumber: 44
+                    lineNumber: 50
                 },
                 __self: undefined
             })
         ]
     }));
 };
+_s(FormulaForm, "US24C20zrDqvC5S2gcxj5QQl2FQ=");
 _c = FormulaForm;
 var _c;
 $RefreshReg$(_c, "FormulaForm");
@@ -23147,7 +23150,7 @@ $RefreshReg$(_c, "FormulaForm");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"6gNyj":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","react":"6TuXu"}],"6gNyj":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$85aa = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23160,137 +23163,93 @@ parcelHelpers.export(exports, "NumberInput", ()=>NumberInput
 );
 var _jsxRuntime = require("react/jsx-runtime");
 var _react = require("react");
+var _numberish = require("../../types/numberish");
 var _numberInputModuleCss = require("./numberInput.module.css");
 var _numberInputModuleCssDefault = parcelHelpers.interopDefault(_numberInputModuleCss);
 var _s = $RefreshSig$();
 const NumberInput = (props)=>{
     _s();
-    const { label , id , value , updateValue , min , max , enforceBounds , required , disableInputMask , precision , customValidator , disabled  } = props;
-    const [val, setVal] = _react.useState("");
-    const [error, setError] = _react.useState({
-        state: false
-    });
-    const maskInput = (s)=>{
-        let re = /^-?[0-9]*[\.,]?[0-9]*$/;
-        if (re.test(s)) return s;
-        return val;
-    };
-    const onInputChange = (s)=>{
-        if (disableInputMask) {
-            setVal(s);
+    const { id , value , setValue , label , precision , required , enforceBounds , min , max , allowNegative , ...rest } = props;
+    const [displayValue, setDisplayValue] = _react.useState("");
+    const [internalValue, setInternalValue] = _react.useState(null);
+    const [error, setError] = _react.useState(false);
+    const pattern = _react.useMemo(()=>{
+        return RegExp(`^${allowNegative ? '-?' : ''}[0-9]*[\.,]?[0-9]*$`);
+    }, [
+        allowNegative
+    ]);
+    const isValidFormat = _react.useCallback((s)=>{
+        return pattern.test(s);
+    }, [
+        pattern
+    ]);
+    const updateInternalValue = _react.useCallback((n)=>{
+        if (!_numberish.isValid(n)) {
+            setInternalValue(n);
             return;
         }
-        setVal(maskInput(s));
-    };
-    const handleEmpty = ()=>{
-        updateValue(undefined);
-        if (required) {
-            setError({
-                state: true,
-                msg: "Field must not be empty"
-            });
+        if (max != null && n > max) {
+            if (enforceBounds) setInternalValue(max);
+            else setError(true);
             return;
         }
-        setError({
-            state: false
-        });
-        return;
-    };
-    const handleNaN = ()=>{
-        setError({
-            state: true,
-            msg: "Invalid number"
-        });
-        setVal("");
-        return;
-    };
-    const updateNumber = (n)=>{
-        let updateNum = n;
-        let updateStr = n.toString();
-        if (precision) {
-            updateStr = n.toFixed(precision);
-            updateNum = parseFloat(updateStr);
-        }
-        setVal(updateStr);
-        updateValue(updateNum);
-    };
-    const handleMin = (minNum)=>{
-        if (enforceBounds) {
-            updateNumber(minNum);
-            setError({
-                state: false
-            });
+        if (min != null && n < min) {
+            if (enforceBounds) setInternalValue(min);
+            else setError(true);
             return;
         }
-        setError({
-            state: true,
-            msg: `Value must not be less than ${minNum}.`
-        });
-        return;
-    };
-    const handleMax = (maxNum)=>{
-        if (enforceBounds) {
-            updateValue(max);
-            setVal(maxNum.toString());
-            setError({
-                state: false
-            });
-            return;
+        setInternalValue(n);
+    }, [
+        enforceBounds,
+        min,
+        max
+    ]);
+    // handle valid input strings
+    const onDisplayChange = _react.useCallback((input)=>{
+        setDisplayValue(input);
+        if (input === "") setInternalValue(null);
+        else {
+            const n = parseFloat(input);
+            if (n !== internalValue) updateInternalValue(n);
         }
-        setError({
-            state: true,
-            msg: `Value must not be greater than ${maxNum}.`
-        });
-        return;
-    };
-    const handleCustom = (v)=>{
-        const { input , errorMsg , allowContinue  } = v;
-        updateNumber(input);
-        if (errorMsg) setError({
-            state: true,
-            msg: errorMsg
-        });
-        if (!allowContinue) return false;
-        return true;
-    };
-    // runs on blur
-    const validateInput = (s)=>{
-        // empty case
-        if (s === "") {
-            handleEmpty();
-            return;
-        }
-        if (customValidator) {
-            const keepValidating = handleCustom(customValidator(s));
-            if (!keepValidating) return;
-        }
-        const parsedVal = parseFloat(s);
-        // doesn't parse to a number
-        if (isNaN(parsedVal)) {
-            handleNaN();
-            return;
-        }
-        if (min !== undefined && parsedVal < min) {
-            handleMin(min);
-            return;
-        }
-        if (max !== undefined && parsedVal > max) {
-            handleMax(max);
-            return;
-        }
-        updateNumber(parsedVal);
-        setError({
-            state: false
-        });
-    };
+    }, [
+        internalValue
+    ]);
+    // handle raw changes to the component
+    const onInputChange = _react.useCallback((e)=>{
+        const val = e.target.value;
+        if (isValidFormat(val)) onDisplayChange(val);
+    }, [
+        isValidFormat,
+        displayValue
+    ]);
+    // update prop.value on blur; should trigger format indirectly via effect
+    const onBlur = _react.useCallback(()=>{
+        setValue(internalValue);
+    }, [
+        setValue,
+        internalValue
+    ]);
+    // formatting callback; if 'live' updating, can't do ToFixed
+    const getDisplayValue = _react.useCallback((n)=>{
+        if (n === null) return "";
+        else if (isNaN(n)) return displayValue;
+        else return n.toFixed(precision);
+    }, [
+        displayValue
+    ]);
+    const handleError = _react.useCallback((value1)=>{
+        if (value1 === null) setError(!!required);
+        else if (isNaN(value1)) setError(true);
+        else setError(false);
+    }, [
+        required
+    ]);
+    // format and adjust ground truth whenever we receieve an updated prop value
     _react.useEffect(()=>{
-        if (value === undefined) {
-            setVal("");
-            validateInput("");
-            return;
-        }
-        setVal(value.toString());
-        validateInput(value.toString());
+        setDisplayValue(getDisplayValue(value));
+        updateInternalValue(value);
+        handleError(value);
     }, [
         value
     ]);
@@ -23298,7 +23257,7 @@ const NumberInput = (props)=>{
         className: _numberInputModuleCssDefault.default.container,
         __source: {
             fileName: "src/components/numberInput/index.tsx",
-            lineNumber: 177
+            lineNumber: 129
         },
         __self: undefined,
         children: [
@@ -23306,54 +23265,32 @@ const NumberInput = (props)=>{
                 htmlFor: id,
                 __source: {
                     fileName: "src/components/numberInput/index.tsx",
-                    lineNumber: 178
+                    lineNumber: 130
                 },
                 __self: undefined,
                 children: label
             }),
-            error.state && /*#__PURE__*/ _jsxRuntime.jsx("p", {
-                id: `${id}-error`,
-                className: _numberInputModuleCssDefault.default.errorMsg,
-                __source: {
-                    fileName: "src/components/numberInput/index.tsx",
-                    lineNumber: 182
-                },
-                __self: undefined,
-                children: error.msg
-            }),
             /*#__PURE__*/ _jsxRuntime.jsx("input", {
-                id: id,
-                inputMode: 'numeric',
-                type: "tel",
-                pattern: "(^-?[0-9]+[\.,]?[0-9]*$)|(^-?[0-9]*[\.,]?[0-9]+$)",
-                value: val,
-                max: max,
-                min: min,
-                disabled: disabled,
-                onChange: (e)=>onInputChange(e.currentTarget.value)
-                ,
-                onKeyDown: (e)=>{
-                    if (disableInputMask) return;
-                    if (val !== "NaN") return;
-                    // using 'nativeEvent.code' because react's syntheticevent does not
-                    // yet have the 'code' property
-                    if (e.nativeEvent.code === "Backspace" || e.nativeEvent.code === "Delete") //special case, treat "NaN" as single character
-                    setVal("");
-                },
-                onBlur: ()=>validateInput(val)
-                ,
+                ...rest,
                 required: required,
+                type: "text",
+                className: error ? _numberInputModuleCssDefault.default.error : '',
+                inputMode: "numeric",
+                pattern: pattern.toString(),
+                onChange: onInputChange,
+                onBlur: onBlur,
+                value: displayValue,
                 "aria-describedby": `${id}-error`,
                 __source: {
                     fileName: "src/components/numberInput/index.tsx",
-                    lineNumber: 189
+                    lineNumber: 133
                 },
                 __self: undefined
             })
         ]
     }));
 };
-_s(NumberInput, "cfAWGldrc9+7RaBjOPOB8nzSHy4=");
+_s(NumberInput, "TEMe/rzsBGH67PKBPK6l8+OfZWs=");
 _c = NumberInput;
 var _c;
 $RefreshReg$(_c, "NumberInput");
@@ -23363,7 +23300,7 @@ $RefreshReg$(_c, "NumberInput");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","react":"6TuXu","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./numberInput.module.css":"drgJS"}],"JacNc":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./numberInput.module.css":"drgJS","../../types/numberish":"hWu61"}],"JacNc":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -23518,8 +23455,19 @@ function registerExportsForReactRefresh(module) {
 },{"react-refresh/runtime":"fNmB3"}],"drgJS":[function(require,module,exports) {
 module.exports["container"] = "_numberInput-module_container";
 module.exports["errorMsg"] = "_numberInput-module_errorMsg";
+module.exports["error"] = "_numberInput-module_error";
 
-},{}],"diqgc":[function(require,module,exports) {
+},{}],"hWu61":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// can't express through typescript, but this also filters out NaN values
+parcelHelpers.export(exports, "isValid", ()=>isValid
+);
+function isValid(n) {
+    return !(n !== 0 && !n);
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"diqgc":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$b5af = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23531,36 +23479,41 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "IngredientsForm", ()=>IngredientsForm
 );
 var _jsxRuntime = require("react/jsx-runtime");
+var _react = require("react");
 var _applyFormula = require("../../functions/applyFormula");
+var _formula = require("../../types/formula");
+var _ingredients = require("../../types/ingredients");
+var _numberish = require("../../types/numberish");
 var _numberInput = require("../numberInput");
+var _s = $RefreshSig$();
 const IngredientsForm = (props)=>{
+    _s();
     const { updateIngredients , ingredients , formula  } = props;
-    const { levainMass , flourMass , waterMass , saltMass  } = ingredients || {
-        levainMass: undefined,
-        flourMass: undefined,
-        waterMass: undefined,
-        saltMass: undefined
-    };
+    const { levainMass , flourMass , waterMass , saltMass  } = ingredients;
     //todo
     const unit = "g";
-    const adjustIngredients = (n, ingredientPercent)=>{
-        if (n === undefined) {
-            updateIngredients(null);
+    // curry apply formula 
+    const adjustIngredients = _react.useCallback((i, getPercent, key)=>{
+        if (!_numberish.isValid(i) || !_formula.validateFormula(formula)) {
+            updateIngredients({
+                ..._ingredients.emptyIngredients(),
+                [key]: i
+            });
             return;
         }
-        if (isNaN(n)) //todo ERROR
-        return;
-        // this needs special handler for water, which has amore complex calc
-        const flourMass1 = _applyFormula.getFlourMass(n, ingredientPercent);
-        const adjustedIngredients = _applyFormula.applyFormula(formula, flourMass1);
-        updateIngredients(adjustedIngredients);
-    };
+        const percent = getPercent(formula);
+        const flour = _applyFormula.getFlourMass(i, percent);
+        updateIngredients(_applyFormula.applyFormula(formula, flour));
+    }, [
+        formula,
+        updateIngredients
+    ]);
     return(/*#__PURE__*/ _jsxRuntime.jsxs(_jsxRuntime.Fragment, {
         children: [
             /*#__PURE__*/ _jsxRuntime.jsx("h2", {
                 __source: {
                     fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 40
+                    lineNumber: 39
                 },
                 __self: undefined,
                 children: "Ingredients"
@@ -23569,14 +23522,15 @@ const IngredientsForm = (props)=>{
                 label: `Pre-Ferment (${unit})`,
                 id: 'pre-ferment',
                 value: levainMass,
-                updateValue: (n)=>adjustIngredients(n, formula.levainPercent)
+                setValue: (n)=>adjustIngredients(n, (f)=>f.levainPercent
+                    , 'levainMass')
                 ,
                 enforceBounds: true,
                 precision: 2,
                 min: 0,
                 __source: {
                     fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 41
+                    lineNumber: 40
                 },
                 __self: undefined
             }),
@@ -23584,14 +23538,15 @@ const IngredientsForm = (props)=>{
                 label: `Water (${unit})`,
                 id: 'water',
                 value: waterMass,
-                updateValue: (n)=>adjustIngredients(n, formula.hydrationPercent)
+                setValue: (n)=>adjustIngredients(n, (f)=>f.hydrationPercent
+                    , 'waterMass')
                 ,
                 enforceBounds: true,
                 precision: 2,
                 min: 0,
                 __source: {
                     fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 50
+                    lineNumber: 49
                 },
                 __self: undefined
             }),
@@ -23599,14 +23554,15 @@ const IngredientsForm = (props)=>{
                 label: `Salt (${unit})`,
                 id: 'salt',
                 value: saltMass,
-                updateValue: (n)=>adjustIngredients(n, formula.saltPercent)
+                setValue: (n)=>adjustIngredients(n, (f)=>f.saltPercent
+                    , 'saltMass')
                 ,
                 enforceBounds: true,
                 precision: 2,
                 min: 0,
                 __source: {
                     fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 59
+                    lineNumber: 58
                 },
                 __self: undefined
             }),
@@ -23614,20 +23570,22 @@ const IngredientsForm = (props)=>{
                 label: `Flour (${unit})`,
                 id: 'flour',
                 value: flourMass,
-                updateValue: (n)=>adjustIngredients(n, 100)
+                setValue: (n)=>adjustIngredients(n, (_f)=>100
+                    , 'flourMass')
                 ,
                 enforceBounds: true,
                 precision: 2,
                 min: 0,
                 __source: {
                     fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 68
+                    lineNumber: 67
                 },
                 __self: undefined
             })
         ]
     }));
 };
+_s(IngredientsForm, "ImFG7jH5snjTccPSHeLNQP2rSNM=");
 _c = IngredientsForm;
 var _c;
 $RefreshReg$(_c, "IngredientsForm");
@@ -23637,7 +23595,7 @@ $RefreshReg$(_c, "IngredientsForm");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","../../functions/applyFormula":"k9vVM"}],"k9vVM":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","../../functions/applyFormula":"k9vVM","react":"6TuXu","../../types/formula":"feNKI","../../types/ingredients":"3rwsI","../../types/numberish":"hWu61"}],"k9vVM":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getFlourMass", ()=>getFlourMass
@@ -23666,17 +23624,339 @@ function applyFormula(formula, flourMass) {
 }
 function applyFormulaTDM(formula, totalDoughMass) {
     const { saltPercent , hydrationPercent , levainPercent  } = formula;
-    if (totalDoughMass < 1) throw new Error("Dough mass must be at least 1 gram.");
+    if (totalDoughMass < 0) throw new Error("Dough mass cannot be negative");
     // +100 to include flour, which isn't represented strictly in the Formula
     const totalPercentages = 100 + saltPercent + hydrationPercent + levainPercent;
     const flourMass = totalDoughMass * 100 / totalPercentages;
     return applyFormula(formula, flourMass);
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"5VQky":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"feNKI":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "validateFormula", ()=>validateFormula
+);
+var _numberish = require("./numberish");
+const validateFormula = (f)=>{
+    return _numberish.isValid(f.saltPercent) && _numberish.isValid(f.levainPercent) && _numberish.isValid(f.hydrationPercent);
+// ...and all mixins
+};
+
+},{"./numberish":"hWu61","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"3rwsI":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "emptyIngredients", ()=>emptyIngredients
+);
+parcelHelpers.export(exports, "validateIngredients", ()=>validateIngredients
+);
+var _numberish = require("./numberish");
+function emptyIngredients() {
+    return {
+        levainMass: null,
+        flourMass: null,
+        waterMass: null,
+        saltMass: null
+    };
+}
+function validateIngredients(i) {
+    return _numberish.isValid(i.saltMass) && _numberish.isValid(i.flourMass) && _numberish.isValid(i.waterMass) && _numberish.isValid(i.levainMass);
+}
+
+},{"./numberish":"hWu61","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"5VQky":[function(require,module,exports) {
 module.exports["main"] = "_app-module_main";
 module.exports["forms"] = "_app-module_forms";
 module.exports["formContainer"] = "_app-module_formContainer";
+
+},{}],"8IPwX":[function(require,module,exports) {
+var $parcel$ReactRefreshHelpers$2181 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
+var prevRefreshReg = window.$RefreshReg$;
+var prevRefreshSig = window.$RefreshSig$;
+$parcel$ReactRefreshHelpers$2181.prelude(module);
+
+try {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "TotalIngredients", ()=>TotalIngredients
+);
+var _jsxRuntime = require("react/jsx-runtime");
+var _totalsModuleCss = require("./totals.module.css");
+var _totalsModuleCssDefault = parcelHelpers.interopDefault(_totalsModuleCss);
+const TotalIngredients = (props)=>{
+    const { levainMass , flourMass , waterMass , saltMass  } = props.ingredients;
+    //todo
+    const unit = "g";
+    return(/*#__PURE__*/ _jsxRuntime.jsxs("div", {
+        className: _totalsModuleCssDefault.default.container,
+        __source: {
+            fileName: "src/components/totalIngredients/index.tsx",
+            lineNumber: 17
+        },
+        __self: undefined,
+        children: [
+            /*#__PURE__*/ _jsxRuntime.jsx("h2", {
+                __source: {
+                    fileName: "src/components/totalIngredients/index.tsx",
+                    lineNumber: 18
+                },
+                __self: undefined,
+                children: "Total Ingredients"
+            }),
+            /*#__PURE__*/ _jsxRuntime.jsx("table", {
+                className: _totalsModuleCssDefault.default.table,
+                __source: {
+                    fileName: "src/components/totalIngredients/index.tsx",
+                    lineNumber: 19
+                },
+                __self: undefined,
+                children: /*#__PURE__*/ _jsxRuntime.jsxs("tbody", {
+                    __source: {
+                        fileName: "src/components/totalIngredients/index.tsx",
+                        lineNumber: 20
+                    },
+                    __self: undefined,
+                    children: [
+                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                            __source: {
+                                fileName: "src/components/totalIngredients/index.tsx",
+                                lineNumber: 21
+                            },
+                            __self: undefined,
+                            children: [
+                                /*#__PURE__*/ _jsxRuntime.jsx("th", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 22
+                                    },
+                                    __self: undefined
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("th", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 23
+                                    },
+                                    __self: undefined,
+                                    children: "Ingredient Name"
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsxs("th", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 24
+                                    },
+                                    __self: undefined,
+                                    children: [
+                                        "Mass (",
+                                        unit,
+                                        ")"
+                                    ]
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                            __source: {
+                                fileName: "src/components/totalIngredients/index.tsx",
+                                lineNumber: 27
+                            },
+                            __self: undefined,
+                            children: [
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 28
+                                    },
+                                    __self: undefined,
+                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 29
+                                        },
+                                        __self: undefined,
+                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
+                                            className: "fas fa-star",
+                                            __source: {
+                                                fileName: "src/components/totalIngredients/index.tsx",
+                                                lineNumber: 30
+                                            },
+                                            __self: undefined
+                                        })
+                                    })
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 33
+                                    },
+                                    __self: undefined,
+                                    children: "Flour"
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 34
+                                    },
+                                    __self: undefined,
+                                    children: flourMass?.toFixed(2)
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                            __source: {
+                                fileName: "src/components/totalIngredients/index.tsx",
+                                lineNumber: 37
+                            },
+                            __self: undefined,
+                            children: [
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 38
+                                    },
+                                    __self: undefined,
+                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 39
+                                        },
+                                        __self: undefined,
+                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
+                                            className: "fas fa-star",
+                                            __source: {
+                                                fileName: "src/components/totalIngredients/index.tsx",
+                                                lineNumber: 40
+                                            },
+                                            __self: undefined
+                                        })
+                                    })
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 43
+                                    },
+                                    __self: undefined,
+                                    children: "Water"
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 44
+                                    },
+                                    __self: undefined,
+                                    children: waterMass?.toFixed(2)
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                            __source: {
+                                fileName: "src/components/totalIngredients/index.tsx",
+                                lineNumber: 47
+                            },
+                            __self: undefined,
+                            children: [
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 48
+                                    },
+                                    __self: undefined,
+                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 49
+                                        },
+                                        __self: undefined,
+                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
+                                            className: "fas fa-star",
+                                            __source: {
+                                                fileName: "src/components/totalIngredients/index.tsx",
+                                                lineNumber: 50
+                                            },
+                                            __self: undefined
+                                        })
+                                    })
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 53
+                                    },
+                                    __self: undefined,
+                                    children: "Preferment"
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 54
+                                    },
+                                    __self: undefined,
+                                    children: levainMass?.toFixed(2)
+                                })
+                            ]
+                        }),
+                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                            __source: {
+                                fileName: "src/components/totalIngredients/index.tsx",
+                                lineNumber: 57
+                            },
+                            __self: undefined,
+                            children: [
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 58
+                                    },
+                                    __self: undefined,
+                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 59
+                                        },
+                                        __self: undefined,
+                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
+                                            className: "fas fa-star",
+                                            __source: {
+                                                fileName: "src/components/totalIngredients/index.tsx",
+                                                lineNumber: 60
+                                            },
+                                            __self: undefined
+                                        })
+                                    })
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 63
+                                    },
+                                    __self: undefined,
+                                    children: "Salt"
+                                }),
+                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                    __source: {
+                                        fileName: "src/components/totalIngredients/index.tsx",
+                                        lineNumber: 64
+                                    },
+                                    __self: undefined,
+                                    children: saltMass?.toFixed(2)
+                                })
+                            ]
+                        })
+                    ]
+                })
+            })
+        ]
+    }));
+};
+_c = TotalIngredients;
+var _c;
+$RefreshReg$(_c, "TotalIngredients");
+
+  $parcel$ReactRefreshHelpers$2181.postlude(module);
+} finally {
+  window.$RefreshReg$ = prevRefreshReg;
+  window.$RefreshSig$ = prevRefreshSig;
+}
+},{"react/jsx-runtime":"8xIwr","./totals.module.css":"fz6qW","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"fz6qW":[function(require,module,exports) {
+module.exports["table"] = "_totals-module_table";
+module.exports["container"] = "_totals-module_container";
 
 },{}]},["2rAXy","czkC5","iqQLF"], "iqQLF", "parcelRequire94c2")
 
