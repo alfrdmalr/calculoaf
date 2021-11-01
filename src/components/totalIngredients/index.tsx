@@ -1,17 +1,56 @@
-import React from 'react';
-import {Ingredients} from '../../types/ingredients';
+import React, { useCallback, useMemo } from 'react';
+import { getReagentLabel, Reagent, ReagentType } from '../../types/reagent';
+import {Ingredients, validateIngredients} from '../../types/ingredients';
 import { Nullable } from '../../types/nullable';
+import { Numberish } from '../../types/numberish';
 import styles from './totals.module.css'
 
 export interface TotalIngredientsProps {
   ingredients: Nullable<Ingredients>;
+  setLimitingReagent: (r: Reagent) => void;
+  limitingReagent: ReagentType;
 }
 
 export const TotalIngredients = (props: TotalIngredientsProps) => {
-  const {levainMass, flourMass, waterMass, saltMass} = props.ingredients;
+  const {setLimitingReagent, limitingReagent, ingredients} = props;
+
+  const {
+    levainMass,
+    flourMass,
+    waterMass,
+    saltMass,
+  } = ingredients;
 
   //todo
   const unit: string = "g";
+
+  const reagentButton = useCallback((key: ReagentType, value: Numberish) => {
+    return (
+      <>
+        {limitingReagent !== key &&
+        <button onClick={() => setLimitingReagent({key: key, value: value})}>
+          <span className="fas fa-star" />
+        </button>
+        }
+      </>
+    );
+
+  
+  }, [limitingReagent, setLimitingReagent]);
+
+  const totalDoughMass = useMemo(() => {
+    if (validateIngredients(ingredients)) {
+      return (0
+        + ingredients.levainMass
+        + ingredients.flourMass
+        + ingredients.saltMass
+        + ingredients.waterMass
+      );
+    } else {
+      return null;
+    }
+
+  }, [ingredients]);
 
   return(
     <div className={styles.container}>
@@ -26,44 +65,45 @@ export const TotalIngredients = (props: TotalIngredientsProps) => {
 
           <tr>
             <td>
-              <button>
-                <span className="fas fa-star" />
-              </button>
+              {reagentButton('flourMass', flourMass)}
             </td>
-            <td>Flour</td>
+            <td>{getReagentLabel('flourMass')}</td>
             <td>{flourMass?.toFixed(2)}</td>
           </tr>
            
           <tr>
             <td>
-              <button>
-                <span className="fas fa-star" />
-              </button>
+              {reagentButton('waterMass', waterMass)}
             </td>
-            <td>Water</td>
+            <td>{getReagentLabel('waterMass')}</td>
             <td>{waterMass?.toFixed(2)}</td>
           </tr>
 
           <tr>
             <td>
-              <button>
-                <span className="fas fa-star" />
-              </button>
+              {reagentButton('levainMass', levainMass)}
             </td>
-            <td>Preferment</td>
+            <td>{getReagentLabel('levainMass')}</td>
             <td>{levainMass?.toFixed(2)}</td>
           </tr>
 
           <tr>
             <td>
-              <button>
-                <span className="fas fa-star" />
-              </button>
+              {reagentButton('saltMass', saltMass)}
             </td>
-            <td>Salt</td>
+            <td>{getReagentLabel('saltMass')}</td>
             <td>{saltMass?.toFixed(2)}</td>
           </tr>
         </tbody>
+        <tfoot>
+          <tr>
+            <td>
+              {reagentButton('totalDoughMass', totalDoughMass)}
+            </td>
+            <td>Total Dough</td>
+            <td>{totalDoughMass?.toFixed(2)}</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   )

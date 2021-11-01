@@ -1,10 +1,22 @@
 .table {
-  border-collapse: separate;
-  border-spacing: 2rem 0rem;
+  border-collapse: collapse;
 }
 
 .table td:last-child {
   text-align: end;
+}
+
+.table tbody td {
+  padding-bottom: 1rem;
+}
+
+.table tfoot td {
+  border-top: solid 2px black;
+  padding-top: 1rem;
+}
+
+.table td:nth-child(2), th:nth-child(2) {
+  padding-right: 1rem;
 }
 
 .container {

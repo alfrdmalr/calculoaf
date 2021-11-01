@@ -1,21 +1,26 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {FormulaForm} from './components/formulaForm';
-import {IngredientsForm} from './components/ingredientsForm';
 import styles from "./app.module.css";
 import {Formula, validateFormula} from './types/formula';
-import {emptyIngredients, Ingredients, validateIngredients} from './types/ingredients';
+import {emptyIngredients, Ingredients} from './types/ingredients';
 import {NumberInput} from './components/numberInput';
-import {applyFormulaTDM} from './functions/applyFormula';
+import {applyFormula, applyFormulaTDM, getFlourMass} from './functions/applyFormula';
 import { Nullable } from './types/nullable';
 import { isValid, Numberish } from './types/numberish';
 import { TotalIngredients } from './components/totalIngredients';
+import { getReagentLabel, Reagent } from './types/reagent';
 
 if (module.hot) {
   module.hot.accept();
 }
 
+const unit: string = "g";
+
 export const App = () => {
-  const [totalDoughMass, setTotalDoughMass] = useState<Numberish>(null);
+  const [limitingReagent, setLimitingReagent] = useState<Reagent>({
+    value: 2070, 
+    key: 'totalDoughMass'
+  });
   const [ingredients, setIngredients] = useState<Nullable<Ingredients>>(emptyIngredients());
   const [formula, setFormula] = useState<Nullable<Formula>>({
     hydrationPercent: 80,
@@ -23,50 +28,75 @@ export const App = () => {
     saltPercent: 2
   });
 
-  const updateIngredients = useCallback((i: Nullable<Ingredients>) => {
-    // needs to be already adjusted 
-    setIngredients(i);
-    if (validateIngredients(i)) {
-      const newTDM = i.saltMass + i.flourMass + i.waterMass + i.levainMass;
-      setTotalDoughMass(newTDM);
-    } else {
-      setTotalDoughMass(null);
+  const handleReagentChange = useCallback((r: Reagent, formula: Formula) => {
+    let newIngredients = emptyIngredients();
+
+    if (!isValid(r.value)) {
+      setIngredients(newIngredients);
+      return;
     }
-  }, [validateIngredients]);
+
+    switch(r.key) {
+      case 'totalDoughMass':
+        newIngredients = applyFormulaTDM(formula, r.value);
+        break;
+      case 'flourMass':
+        newIngredients = applyFormula(formula, r.value);
+        break;
+      case 'levainMass':
+        newIngredients = applyFormula(formula, getFlourMass(r.value, formula.levainPercent));
+        break;
+      case 'waterMass':
+        newIngredients = applyFormula(formula, getFlourMass(r.value, formula.hydrationPercent));
+        break;
+      case 'saltMass':
+        newIngredients = applyFormula(formula, getFlourMass(r.value, formula.saltPercent));
+        break;
+      default:
+        break;
+    }
+
+    setIngredients(newIngredients)
+  }, []);
+
 
   useEffect(() => {
+    const {key, value} = limitingReagent;
+
     if (!validateFormula(formula) || 
-      !isValid(totalDoughMass)) {
+      !isValid(value)) {
       setIngredients(emptyIngredients());
     } else {
-      setIngredients(applyFormulaTDM(formula, totalDoughMass));
+      handleReagentChange({key, value}, formula);
     }
-  }, [formula, totalDoughMass]);
+  }, [formula, limitingReagent]);
 
   return(
     <div className={styles.main}>
       <h1>Calculoaf</h1>
       <p>A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa.</p>
-        <NumberInput 
-            label={
-            <>
-              <span className="fas fa-star" />
-              <b> Total Dough Mass</b>
-            </>
-            }
-          id={'dough-mass'}
-          value={totalDoughMass}
-          min={0}
-          enforceBounds
-          precision={0}
-          setValue={setTotalDoughMass}
-        />
+
+      <NumberInput 
+        label={
+          <>
+            <span className="fas fa-star" />
+            <b> {getReagentLabel(limitingReagent.key)} Mass ({unit})</b>
+          </>
+        }
+        id={'dough-mass'}
+        value={limitingReagent.value}
+        min={0}
+        enforceBounds
+        precision={0}
+        setValue={n => setLimitingReagent(prev => ({key: prev.key, value: n}))}
+      />
+
       <div className={styles.forms}>
         <div className={styles.formContainer}>
-          <IngredientsForm 
-            formula={formula}
-            updateIngredients={updateIngredients}
+          <TotalIngredients 
             ingredients={ingredients}
+            setLimitingReagent={setLimitingReagent}
+            limitingReagent={limitingReagent.key}
           />
         </div>
         <div className={styles.formContainer}>
@@ -75,11 +105,6 @@ export const App = () => {
             formula={formula}
           />
         </div>
-      </div>
-      <div className={styles.formContainer}>
-        <TotalIngredients 
-          ingredients={ingredients}
-        />
       </div>
     </div>
   )
