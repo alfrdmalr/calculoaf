@@ -43,12 +43,24 @@ input {
 }
 
 ._totals-module_table {
-  border-collapse: separate;
-  border-spacing: 2rem 0rem;
+  border-collapse: collapse;
 }
 
 ._totals-module_table td:last-child {
   text-align: end;
+}
+
+._totals-module_table tbody td {
+  padding-bottom: 1rem;
+}
+
+._totals-module_table tfoot td {
+  border-top: solid 2px black;
+  padding-top: 1rem;
+}
+
+._totals-module_table td:nth-child(2), th:nth-child(2) {
+  padding-right: 1rem;
 }
 
 ._totals-module_container {

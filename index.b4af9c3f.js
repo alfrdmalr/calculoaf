@@ -22893,7 +22893,6 @@ parcelHelpers.export(exports, "App", ()=>App
 var _jsxRuntime = require("react/jsx-runtime");
 var _react = require("react");
 var _formulaForm = require("./components/formulaForm");
-var _ingredientsForm = require("./components/ingredientsForm");
 var _appModuleCss = require("./app.module.css");
 var _appModuleCssDefault = parcelHelpers.interopDefault(_appModuleCss);
 var _formula = require("./types/formula");
@@ -22902,44 +22901,72 @@ var _numberInput = require("./components/numberInput");
 var _applyFormula = require("./functions/applyFormula");
 var _numberish = require("./types/numberish");
 var _totalIngredients = require("./components/totalIngredients");
+var _reagent = require("./types/reagent");
 var _s = $RefreshSig$();
 if (module.hot) module.hot.accept();
+const unit = "g";
 const App = ()=>{
     _s();
-    const [totalDoughMass, setTotalDoughMass] = _react.useState(null);
+    const [limitingReagent, setLimitingReagent] = _react.useState({
+        value: 2070,
+        key: 'totalDoughMass'
+    });
     const [ingredients, setIngredients] = _react.useState(_ingredients.emptyIngredients());
     const [formula, setFormula] = _react.useState({
         hydrationPercent: 80,
         levainPercent: 25,
         saltPercent: 2
     });
-    const updateIngredients = _react.useCallback((i)=>{
-        // needs to be already adjusted 
-        setIngredients(i);
-        if (_ingredients.validateIngredients(i)) {
-            const newTDM = i.saltMass + i.flourMass + i.waterMass + i.levainMass;
-            setTotalDoughMass(newTDM);
-        } else setTotalDoughMass(null);
-    }, [_ingredients.validateIngredients]);
+    const handleReagentChange = _react.useCallback((r, formula1)=>{
+        let newIngredients = _ingredients.emptyIngredients();
+        if (!_numberish.isValid(r.value)) {
+            setIngredients(newIngredients);
+            return;
+        }
+        switch(r.key){
+            case 'totalDoughMass':
+                newIngredients = _applyFormula.applyFormulaTDM(formula1, r.value);
+                break;
+            case 'flourMass':
+                newIngredients = _applyFormula.applyFormula(formula1, r.value);
+                break;
+            case 'levainMass':
+                newIngredients = _applyFormula.applyFormula(formula1, _applyFormula.getFlourMass(r.value, formula1.levainPercent));
+                break;
+            case 'waterMass':
+                newIngredients = _applyFormula.applyFormula(formula1, _applyFormula.getFlourMass(r.value, formula1.hydrationPercent));
+                break;
+            case 'saltMass':
+                newIngredients = _applyFormula.applyFormula(formula1, _applyFormula.getFlourMass(r.value, formula1.saltPercent));
+                break;
+            default:
+                break;
+        }
+        setIngredients(newIngredients);
+    }, []);
     _react.useEffect(()=>{
-        if (!_formula.validateFormula(formula) || !_numberish.isValid(totalDoughMass)) setIngredients(_ingredients.emptyIngredients());
-        else setIngredients(_applyFormula.applyFormulaTDM(formula, totalDoughMass));
+        const { key , value  } = limitingReagent;
+        if (!_formula.validateFormula(formula) || !_numberish.isValid(value)) setIngredients(_ingredients.emptyIngredients());
+        else handleReagentChange({
+            key,
+            value
+        }, formula);
     }, [
         formula,
-        totalDoughMass
+        limitingReagent
     ]);
     return(/*#__PURE__*/ _jsxRuntime.jsxs("div", {
         className: _appModuleCssDefault.default.main,
         __source: {
             fileName: "src/App.tsx",
-            lineNumber: 47
+            lineNumber: 75
         },
         __self: undefined,
         children: [
             /*#__PURE__*/ _jsxRuntime.jsx("h1", {
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 48
+                    lineNumber: 76
                 },
                 __self: undefined,
                 children: "Calculoaf"
@@ -22947,7 +22974,7 @@ const App = ()=>{
             /*#__PURE__*/ _jsxRuntime.jsx("p", {
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 49
+                    lineNumber: 77
                 },
                 __self: undefined,
                 children: "A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa."
@@ -22958,20 +22985,31 @@ const App = ()=>{
                         /*#__PURE__*/ _jsxRuntime.jsx("span", {
                             className: "fas fa-star"
                         }),
-                        /*#__PURE__*/ _jsxRuntime.jsx("b", {
-                            children: " Total Dough Mass"
+                        /*#__PURE__*/ _jsxRuntime.jsxs("b", {
+                            children: [
+                                " ",
+                                _reagent.getReagentLabel(limitingReagent.key),
+                                " Mass (",
+                                unit,
+                                ")"
+                            ]
                         })
                     ]
                 }),
                 id: 'dough-mass',
-                value: totalDoughMass,
+                value: limitingReagent.value,
                 min: 0,
                 enforceBounds: true,
                 precision: 0,
-                setValue: setTotalDoughMass,
+                setValue: (n)=>setLimitingReagent((prev)=>({
+                            key: prev.key,
+                            value: n
+                        })
+                    )
+                ,
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 50
+                    lineNumber: 79
                 },
                 __self: undefined
             }),
@@ -22979,7 +23017,7 @@ const App = ()=>{
                 className: _appModuleCssDefault.default.forms,
                 __source: {
                     fileName: "src/App.tsx",
-                    lineNumber: 64
+                    lineNumber: 94
                 },
                 __self: undefined,
                 children: [
@@ -22987,16 +23025,16 @@ const App = ()=>{
                         className: _appModuleCssDefault.default.formContainer,
                         __source: {
                             fileName: "src/App.tsx",
-                            lineNumber: 65
+                            lineNumber: 95
                         },
                         __self: undefined,
-                        children: /*#__PURE__*/ _jsxRuntime.jsx(_ingredientsForm.IngredientsForm, {
-                            formula: formula,
-                            updateIngredients: updateIngredients,
+                        children: /*#__PURE__*/ _jsxRuntime.jsx(_totalIngredients.TotalIngredients, {
                             ingredients: ingredients,
+                            setLimitingReagent: setLimitingReagent,
+                            limitingReagent: limitingReagent.key,
                             __source: {
                                 fileName: "src/App.tsx",
-                                lineNumber: 66
+                                lineNumber: 96
                             },
                             __self: undefined
                         })
@@ -23005,7 +23043,7 @@ const App = ()=>{
                         className: _appModuleCssDefault.default.formContainer,
                         __source: {
                             fileName: "src/App.tsx",
-                            lineNumber: 72
+                            lineNumber: 102
                         },
                         __self: undefined,
                         children: /*#__PURE__*/ _jsxRuntime.jsx(_formulaForm.FormulaForm, {
@@ -23013,33 +23051,17 @@ const App = ()=>{
                             formula: formula,
                             __source: {
                                 fileName: "src/App.tsx",
-                                lineNumber: 73
+                                lineNumber: 103
                             },
                             __self: undefined
                         })
                     })
                 ]
-            }),
-            /*#__PURE__*/ _jsxRuntime.jsx("div", {
-                className: _appModuleCssDefault.default.formContainer,
-                __source: {
-                    fileName: "src/App.tsx",
-                    lineNumber: 79
-                },
-                __self: undefined,
-                children: /*#__PURE__*/ _jsxRuntime.jsx(_totalIngredients.TotalIngredients, {
-                    ingredients: ingredients,
-                    __source: {
-                        fileName: "src/App.tsx",
-                        lineNumber: 80
-                    },
-                    __self: undefined
-                })
             })
         ]
     }));
 };
-_s(App, "6J1fVPTO1BwKQj5aPKdWorDK0EI=");
+_s(App, "wFTWgNedhJhHvlW6tsKXNlj+j60=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
@@ -23049,7 +23071,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./components/formulaForm":"02R9T","./components/ingredientsForm":"diqgc","./app.module.css":"5VQky","./components/numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./functions/applyFormula":"k9vVM","./types/formula":"feNKI","./types/ingredients":"3rwsI","./types/numberish":"hWu61","./components/totalIngredients":"8IPwX"}],"02R9T":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./components/formulaForm":"02R9T","./app.module.css":"5VQky","./types/formula":"feNKI","./types/ingredients":"3rwsI","./components/numberInput":"6gNyj","./functions/applyFormula":"k9vVM","./types/numberish":"hWu61","./components/totalIngredients":"8IPwX","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./types/reagent":"8XsWA"}],"02R9T":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$4c55 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23150,7 +23172,7 @@ $RefreshReg$(_c, "FormulaForm");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","react":"6TuXu"}],"6gNyj":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"6gNyj":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$85aa = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23300,7 +23322,17 @@ $RefreshReg$(_c, "NumberInput");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","react":"6TuXu","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./numberInput.module.css":"drgJS","../../types/numberish":"hWu61"}],"JacNc":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","../../types/numberish":"hWu61","./numberInput.module.css":"drgJS","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"hWu61":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// can't express through typescript, but this also filters out NaN values
+parcelHelpers.export(exports, "isValid", ()=>isValid
+);
+function isValid(n) {
+    return !(n !== 0 && !n);
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"JacNc":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -23331,6 +23363,11 @@ exports.export = function(dest, destName, get) {
         get: get
     });
 };
+
+},{}],"drgJS":[function(require,module,exports) {
+module.exports["container"] = "_numberInput-module_container";
+module.exports["errorMsg"] = "_numberInput-module_errorMsg";
+module.exports["error"] = "_numberInput-module_error";
 
 },{}],"5V79J":[function(require,module,exports) {
 "use strict";
@@ -23452,150 +23489,43 @@ function registerExportsForReactRefresh(module) {
     }
 }
 
-},{"react-refresh/runtime":"fNmB3"}],"drgJS":[function(require,module,exports) {
-module.exports["container"] = "_numberInput-module_container";
-module.exports["errorMsg"] = "_numberInput-module_errorMsg";
-module.exports["error"] = "_numberInput-module_error";
+},{"react-refresh/runtime":"fNmB3"}],"5VQky":[function(require,module,exports) {
+module.exports["main"] = "_app-module_main";
+module.exports["forms"] = "_app-module_forms";
+module.exports["formContainer"] = "_app-module_formContainer";
 
-},{}],"hWu61":[function(require,module,exports) {
+},{}],"feNKI":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
-// can't express through typescript, but this also filters out NaN values
-parcelHelpers.export(exports, "isValid", ()=>isValid
+parcelHelpers.export(exports, "validateFormula", ()=>validateFormula
 );
-function isValid(n) {
-    return !(n !== 0 && !n);
-}
-
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"diqgc":[function(require,module,exports) {
-var $parcel$ReactRefreshHelpers$b5af = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
-var prevRefreshReg = window.$RefreshReg$;
-var prevRefreshSig = window.$RefreshSig$;
-$parcel$ReactRefreshHelpers$b5af.prelude(module);
-
-try {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "IngredientsForm", ()=>IngredientsForm
-);
-var _jsxRuntime = require("react/jsx-runtime");
-var _react = require("react");
-var _applyFormula = require("../../functions/applyFormula");
-var _formula = require("../../types/formula");
-var _ingredients = require("../../types/ingredients");
-var _numberish = require("../../types/numberish");
-var _numberInput = require("../numberInput");
-var _s = $RefreshSig$();
-const IngredientsForm = (props)=>{
-    _s();
-    const { updateIngredients , ingredients , formula  } = props;
-    const { levainMass , flourMass , waterMass , saltMass  } = ingredients;
-    //todo
-    const unit = "g";
-    // curry apply formula 
-    const adjustIngredients = _react.useCallback((i, getPercent, key)=>{
-        if (!_numberish.isValid(i) || !_formula.validateFormula(formula)) {
-            updateIngredients({
-                ..._ingredients.emptyIngredients(),
-                [key]: i
-            });
-            return;
-        }
-        const percent = getPercent(formula);
-        const flour = _applyFormula.getFlourMass(i, percent);
-        updateIngredients(_applyFormula.applyFormula(formula, flour));
-    }, [
-        formula,
-        updateIngredients
-    ]);
-    return(/*#__PURE__*/ _jsxRuntime.jsxs(_jsxRuntime.Fragment, {
-        children: [
-            /*#__PURE__*/ _jsxRuntime.jsx("h2", {
-                __source: {
-                    fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 39
-                },
-                __self: undefined,
-                children: "Ingredients"
-            }),
-            /*#__PURE__*/ _jsxRuntime.jsx(_numberInput.NumberInput, {
-                label: `Pre-Ferment (${unit})`,
-                id: 'pre-ferment',
-                value: levainMass,
-                setValue: (n)=>adjustIngredients(n, (f)=>f.levainPercent
-                    , 'levainMass')
-                ,
-                enforceBounds: true,
-                precision: 2,
-                min: 0,
-                __source: {
-                    fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 40
-                },
-                __self: undefined
-            }),
-            /*#__PURE__*/ _jsxRuntime.jsx(_numberInput.NumberInput, {
-                label: `Water (${unit})`,
-                id: 'water',
-                value: waterMass,
-                setValue: (n)=>adjustIngredients(n, (f)=>f.hydrationPercent
-                    , 'waterMass')
-                ,
-                enforceBounds: true,
-                precision: 2,
-                min: 0,
-                __source: {
-                    fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 49
-                },
-                __self: undefined
-            }),
-            /*#__PURE__*/ _jsxRuntime.jsx(_numberInput.NumberInput, {
-                label: `Salt (${unit})`,
-                id: 'salt',
-                value: saltMass,
-                setValue: (n)=>adjustIngredients(n, (f)=>f.saltPercent
-                    , 'saltMass')
-                ,
-                enforceBounds: true,
-                precision: 2,
-                min: 0,
-                __source: {
-                    fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 58
-                },
-                __self: undefined
-            }),
-            /*#__PURE__*/ _jsxRuntime.jsx(_numberInput.NumberInput, {
-                label: `Flour (${unit})`,
-                id: 'flour',
-                value: flourMass,
-                setValue: (n)=>adjustIngredients(n, (_f)=>100
-                    , 'flourMass')
-                ,
-                enforceBounds: true,
-                precision: 2,
-                min: 0,
-                __source: {
-                    fileName: "src/components/ingredientsForm/index.tsx",
-                    lineNumber: 67
-                },
-                __self: undefined
-            })
-        ]
-    }));
+var _numberish = require("./numberish");
+const validateFormula = (f)=>{
+    return _numberish.isValid(f.saltPercent) && _numberish.isValid(f.levainPercent) && _numberish.isValid(f.hydrationPercent);
+// ...and all mixins
 };
-_s(IngredientsForm, "ImFG7jH5snjTccPSHeLNQP2rSNM=");
-_c = IngredientsForm;
-var _c;
-$RefreshReg$(_c, "IngredientsForm");
 
-  $parcel$ReactRefreshHelpers$b5af.postlude(module);
-} finally {
-  window.$RefreshReg$ = prevRefreshReg;
-  window.$RefreshSig$ = prevRefreshSig;
+},{"./numberish":"hWu61","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"3rwsI":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "emptyIngredients", ()=>emptyIngredients
+);
+parcelHelpers.export(exports, "validateIngredients", ()=>validateIngredients
+);
+var _numberish = require("./numberish");
+function emptyIngredients() {
+    return {
+        levainMass: null,
+        flourMass: null,
+        waterMass: null,
+        saltMass: null
+    };
 }
-},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","../../functions/applyFormula":"k9vVM","react":"6TuXu","../../types/formula":"feNKI","../../types/ingredients":"3rwsI","../../types/numberish":"hWu61"}],"k9vVM":[function(require,module,exports) {
+function validateIngredients(i) {
+    return _numberish.isValid(i.saltMass) && _numberish.isValid(i.flourMass) && _numberish.isValid(i.waterMass) && _numberish.isValid(i.levainMass);
+}
+
+},{"./numberish":"hWu61","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"k9vVM":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getFlourMass", ()=>getFlourMass
@@ -23631,43 +23561,7 @@ function applyFormulaTDM(formula, totalDoughMass) {
     return applyFormula(formula, flourMass);
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"feNKI":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "validateFormula", ()=>validateFormula
-);
-var _numberish = require("./numberish");
-const validateFormula = (f)=>{
-    return _numberish.isValid(f.saltPercent) && _numberish.isValid(f.levainPercent) && _numberish.isValid(f.hydrationPercent);
-// ...and all mixins
-};
-
-},{"./numberish":"hWu61","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"3rwsI":[function(require,module,exports) {
-var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
-parcelHelpers.defineInteropFlag(exports);
-parcelHelpers.export(exports, "emptyIngredients", ()=>emptyIngredients
-);
-parcelHelpers.export(exports, "validateIngredients", ()=>validateIngredients
-);
-var _numberish = require("./numberish");
-function emptyIngredients() {
-    return {
-        levainMass: null,
-        flourMass: null,
-        waterMass: null,
-        saltMass: null
-    };
-}
-function validateIngredients(i) {
-    return _numberish.isValid(i.saltMass) && _numberish.isValid(i.flourMass) && _numberish.isValid(i.waterMass) && _numberish.isValid(i.levainMass);
-}
-
-},{"./numberish":"hWu61","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"5VQky":[function(require,module,exports) {
-module.exports["main"] = "_app-module_main";
-module.exports["forms"] = "_app-module_forms";
-module.exports["formContainer"] = "_app-module_formContainer";
-
-},{}],"8IPwX":[function(require,module,exports) {
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}],"8IPwX":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$2181 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23679,272 +23573,298 @@ parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "TotalIngredients", ()=>TotalIngredients
 );
 var _jsxRuntime = require("react/jsx-runtime");
+var _react = require("react");
+var _reagent = require("../../types/reagent");
+var _ingredients = require("../../types/ingredients");
 var _totalsModuleCss = require("./totals.module.css");
 var _totalsModuleCssDefault = parcelHelpers.interopDefault(_totalsModuleCss);
+var _s = $RefreshSig$();
 const TotalIngredients = (props)=>{
-    const { levainMass , flourMass , waterMass , saltMass  } = props.ingredients;
+    _s();
+    const { setLimitingReagent , limitingReagent , ingredients  } = props;
+    const { levainMass , flourMass , waterMass , saltMass ,  } = ingredients;
     //todo
     const unit = "g";
+    const reagentButton = _react.useCallback((key, value)=>{
+        return(/*#__PURE__*/ _jsxRuntime.jsx(_jsxRuntime.Fragment, {
+            children: limitingReagent !== key && /*#__PURE__*/ _jsxRuntime.jsx("button", {
+                onClick: ()=>setLimitingReagent({
+                        key: key,
+                        value: value
+                    })
+                ,
+                __source: {
+                    fileName: "src/components/totalIngredients/index.tsx",
+                    lineNumber: 31
+                },
+                __self: undefined,
+                children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
+                    className: "fas fa-star",
+                    __source: {
+                        fileName: "src/components/totalIngredients/index.tsx",
+                        lineNumber: 32
+                    },
+                    __self: undefined
+                })
+            })
+        }));
+    }, [
+        limitingReagent,
+        setLimitingReagent
+    ]);
+    const totalDoughMass = _react.useMemo(()=>{
+        if (_ingredients.validateIngredients(ingredients)) return 0 + ingredients.levainMass + ingredients.flourMass + ingredients.saltMass + ingredients.waterMass;
+        else return null;
+    }, [
+        ingredients
+    ]);
     return(/*#__PURE__*/ _jsxRuntime.jsxs("div", {
         className: _totalsModuleCssDefault.default.container,
         __source: {
             fileName: "src/components/totalIngredients/index.tsx",
-            lineNumber: 17
+            lineNumber: 56
         },
         __self: undefined,
         children: [
             /*#__PURE__*/ _jsxRuntime.jsx("h2", {
                 __source: {
                     fileName: "src/components/totalIngredients/index.tsx",
-                    lineNumber: 18
+                    lineNumber: 57
                 },
                 __self: undefined,
                 children: "Total Ingredients"
             }),
-            /*#__PURE__*/ _jsxRuntime.jsx("table", {
+            /*#__PURE__*/ _jsxRuntime.jsxs("table", {
                 className: _totalsModuleCssDefault.default.table,
                 __source: {
                     fileName: "src/components/totalIngredients/index.tsx",
-                    lineNumber: 19
+                    lineNumber: 58
                 },
                 __self: undefined,
-                children: /*#__PURE__*/ _jsxRuntime.jsxs("tbody", {
-                    __source: {
-                        fileName: "src/components/totalIngredients/index.tsx",
-                        lineNumber: 20
-                    },
-                    __self: undefined,
-                    children: [
-                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
-                            __source: {
-                                fileName: "src/components/totalIngredients/index.tsx",
-                                lineNumber: 21
-                            },
-                            __self: undefined,
-                            children: [
-                                /*#__PURE__*/ _jsxRuntime.jsx("th", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 22
-                                    },
-                                    __self: undefined
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("th", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 23
-                                    },
-                                    __self: undefined,
-                                    children: "Ingredient Name"
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsxs("th", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 24
-                                    },
-                                    __self: undefined,
-                                    children: [
-                                        "Mass (",
-                                        unit,
-                                        ")"
-                                    ]
-                                })
-                            ]
-                        }),
-                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
-                            __source: {
-                                fileName: "src/components/totalIngredients/index.tsx",
-                                lineNumber: 27
-                            },
-                            __self: undefined,
-                            children: [
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 28
-                                    },
-                                    __self: undefined,
-                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
+                children: [
+                    /*#__PURE__*/ _jsxRuntime.jsxs("tbody", {
+                        __source: {
+                            fileName: "src/components/totalIngredients/index.tsx",
+                            lineNumber: 59
+                        },
+                        __self: undefined,
+                        children: [
+                            /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                                __source: {
+                                    fileName: "src/components/totalIngredients/index.tsx",
+                                    lineNumber: 60
+                                },
+                                __self: undefined,
+                                children: [
+                                    /*#__PURE__*/ _jsxRuntime.jsx("th", {
                                         __source: {
                                             fileName: "src/components/totalIngredients/index.tsx",
-                                            lineNumber: 29
+                                            lineNumber: 61
+                                        },
+                                        __self: undefined
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("th", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 62
                                         },
                                         __self: undefined,
-                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
-                                            className: "fas fa-star",
-                                            __source: {
-                                                fileName: "src/components/totalIngredients/index.tsx",
-                                                lineNumber: 30
-                                            },
-                                            __self: undefined
-                                        })
+                                        children: "Ingredient Name"
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsxs("th", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 63
+                                        },
+                                        __self: undefined,
+                                        children: [
+                                            "Mass (",
+                                            unit,
+                                            ")"
+                                        ]
                                     })
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 33
-                                    },
-                                    __self: undefined,
-                                    children: "Flour"
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 34
-                                    },
-                                    __self: undefined,
-                                    children: flourMass?.toFixed(2)
-                                })
-                            ]
-                        }),
-                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                                __source: {
+                                    fileName: "src/components/totalIngredients/index.tsx",
+                                    lineNumber: 66
+                                },
+                                __self: undefined,
+                                children: [
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 67
+                                        },
+                                        __self: undefined,
+                                        children: reagentButton('flourMass', flourMass)
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 70
+                                        },
+                                        __self: undefined,
+                                        children: _reagent.getReagentLabel('flourMass')
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 71
+                                        },
+                                        __self: undefined,
+                                        children: flourMass?.toFixed(2)
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                                __source: {
+                                    fileName: "src/components/totalIngredients/index.tsx",
+                                    lineNumber: 74
+                                },
+                                __self: undefined,
+                                children: [
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 75
+                                        },
+                                        __self: undefined,
+                                        children: reagentButton('waterMass', waterMass)
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 78
+                                        },
+                                        __self: undefined,
+                                        children: _reagent.getReagentLabel('waterMass')
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 79
+                                        },
+                                        __self: undefined,
+                                        children: waterMass?.toFixed(2)
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                                __source: {
+                                    fileName: "src/components/totalIngredients/index.tsx",
+                                    lineNumber: 82
+                                },
+                                __self: undefined,
+                                children: [
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 83
+                                        },
+                                        __self: undefined,
+                                        children: reagentButton('levainMass', levainMass)
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 86
+                                        },
+                                        __self: undefined,
+                                        children: _reagent.getReagentLabel('levainMass')
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 87
+                                        },
+                                        __self: undefined,
+                                        children: levainMass?.toFixed(2)
+                                    })
+                                ]
+                            }),
+                            /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
+                                __source: {
+                                    fileName: "src/components/totalIngredients/index.tsx",
+                                    lineNumber: 90
+                                },
+                                __self: undefined,
+                                children: [
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 91
+                                        },
+                                        __self: undefined,
+                                        children: reagentButton('saltMass', saltMass)
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 94
+                                        },
+                                        __self: undefined,
+                                        children: _reagent.getReagentLabel('saltMass')
+                                    }),
+                                    /*#__PURE__*/ _jsxRuntime.jsx("td", {
+                                        __source: {
+                                            fileName: "src/components/totalIngredients/index.tsx",
+                                            lineNumber: 95
+                                        },
+                                        __self: undefined,
+                                        children: saltMass?.toFixed(2)
+                                    })
+                                ]
+                            })
+                        ]
+                    }),
+                    /*#__PURE__*/ _jsxRuntime.jsx("tfoot", {
+                        __source: {
+                            fileName: "src/components/totalIngredients/index.tsx",
+                            lineNumber: 98
+                        },
+                        __self: undefined,
+                        children: /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
                             __source: {
                                 fileName: "src/components/totalIngredients/index.tsx",
-                                lineNumber: 37
+                                lineNumber: 99
                             },
                             __self: undefined,
                             children: [
                                 /*#__PURE__*/ _jsxRuntime.jsx("td", {
                                     __source: {
                                         fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 38
+                                        lineNumber: 100
                                     },
                                     __self: undefined,
-                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
-                                        __source: {
-                                            fileName: "src/components/totalIngredients/index.tsx",
-                                            lineNumber: 39
-                                        },
-                                        __self: undefined,
-                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
-                                            className: "fas fa-star",
-                                            __source: {
-                                                fileName: "src/components/totalIngredients/index.tsx",
-                                                lineNumber: 40
-                                            },
-                                            __self: undefined
-                                        })
-                                    })
+                                    children: reagentButton('totalDoughMass', totalDoughMass)
                                 }),
                                 /*#__PURE__*/ _jsxRuntime.jsx("td", {
                                     __source: {
                                         fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 43
+                                        lineNumber: 103
                                     },
                                     __self: undefined,
-                                    children: "Water"
+                                    children: "Total Dough"
                                 }),
                                 /*#__PURE__*/ _jsxRuntime.jsx("td", {
                                     __source: {
                                         fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 44
+                                        lineNumber: 104
                                     },
                                     __self: undefined,
-                                    children: waterMass?.toFixed(2)
-                                })
-                            ]
-                        }),
-                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
-                            __source: {
-                                fileName: "src/components/totalIngredients/index.tsx",
-                                lineNumber: 47
-                            },
-                            __self: undefined,
-                            children: [
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 48
-                                    },
-                                    __self: undefined,
-                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
-                                        __source: {
-                                            fileName: "src/components/totalIngredients/index.tsx",
-                                            lineNumber: 49
-                                        },
-                                        __self: undefined,
-                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
-                                            className: "fas fa-star",
-                                            __source: {
-                                                fileName: "src/components/totalIngredients/index.tsx",
-                                                lineNumber: 50
-                                            },
-                                            __self: undefined
-                                        })
-                                    })
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 53
-                                    },
-                                    __self: undefined,
-                                    children: "Preferment"
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 54
-                                    },
-                                    __self: undefined,
-                                    children: levainMass?.toFixed(2)
-                                })
-                            ]
-                        }),
-                        /*#__PURE__*/ _jsxRuntime.jsxs("tr", {
-                            __source: {
-                                fileName: "src/components/totalIngredients/index.tsx",
-                                lineNumber: 57
-                            },
-                            __self: undefined,
-                            children: [
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 58
-                                    },
-                                    __self: undefined,
-                                    children: /*#__PURE__*/ _jsxRuntime.jsx("button", {
-                                        __source: {
-                                            fileName: "src/components/totalIngredients/index.tsx",
-                                            lineNumber: 59
-                                        },
-                                        __self: undefined,
-                                        children: /*#__PURE__*/ _jsxRuntime.jsx("span", {
-                                            className: "fas fa-star",
-                                            __source: {
-                                                fileName: "src/components/totalIngredients/index.tsx",
-                                                lineNumber: 60
-                                            },
-                                            __self: undefined
-                                        })
-                                    })
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 63
-                                    },
-                                    __self: undefined,
-                                    children: "Salt"
-                                }),
-                                /*#__PURE__*/ _jsxRuntime.jsx("td", {
-                                    __source: {
-                                        fileName: "src/components/totalIngredients/index.tsx",
-                                        lineNumber: 64
-                                    },
-                                    __self: undefined,
-                                    children: saltMass?.toFixed(2)
+                                    children: totalDoughMass?.toFixed(2)
                                 })
                             ]
                         })
-                    ]
-                })
+                    })
+                ]
             })
         ]
     }));
 };
+_s(TotalIngredients, "4U1j9tRWw0BVLxGF6NqqleSgZUo=");
 _c = TotalIngredients;
 var _c;
 $RefreshReg$(_c, "TotalIngredients");
@@ -23954,10 +23874,31 @@ $RefreshReg$(_c, "TotalIngredients");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","./totals.module.css":"fz6qW","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"fz6qW":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","./totals.module.css":"fz6qW","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","react":"6TuXu","../../types/reagent":"8XsWA","../../types/ingredients":"3rwsI"}],"fz6qW":[function(require,module,exports) {
 module.exports["table"] = "_totals-module_table";
 module.exports["container"] = "_totals-module_container";
 
-},{}]},["2rAXy","czkC5","iqQLF"], "iqQLF", "parcelRequire94c2")
+},{}],"8XsWA":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+// use this in totals component
+parcelHelpers.export(exports, "getReagentLabel", ()=>getReagentLabel
+);
+function getReagentLabel(key) {
+    switch(key){
+        case 'totalDoughMass':
+            return "Total Dough";
+        case 'flourMass':
+            return "Flour";
+        case 'levainMass':
+            return "Levain";
+        case 'waterMass':
+            return "Water";
+        case 'saltMass':
+            return "Salt";
+    }
+}
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"JacNc"}]},["2rAXy","czkC5","iqQLF"], "iqQLF", "parcelRequire94c2")
 
 //# sourceMappingURL=index.b4af9c3f.js.map
