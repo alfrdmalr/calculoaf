@@ -1,39 +1,38 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {applyFormula, getFlourMass} from '../../functions/applyFormula';
-import {Formula} from '../../types/formula';
-import {Ingredients} from '../../types/ingredients';
+import {Formula, validateFormula} from '../../types/formula';
+import {emptyIngredients, Ingredients} from '../../types/ingredients';
+import { Nullable } from '../../types/nullable';
+import { isValid, Numberish } from '../../types/numberish';
 import {NumberInput} from '../numberInput';
 
 export interface IngredientsFormProps {
-  ingredients: Ingredients | undefined;
-  updateIngredients: (i: Ingredients | null) => void;
-  formula: Formula;
+  ingredients: Nullable<Ingredients>;
+  updateIngredients: (i: Nullable<Ingredients>) => void;
+  formula: Nullable<Formula>;
 }
 
 export const IngredientsForm = (props: IngredientsFormProps) => {
   const {updateIngredients, ingredients, formula } = props;
-  const { levainMass, flourMass, waterMass, saltMass } = ingredients || {
-    levainMass: undefined, flourMass: undefined, waterMass: undefined, saltMass: undefined
-  };
+  const { levainMass, flourMass, waterMass, saltMass } = ingredients;
 
   //todo
   const unit: string = "g";
 
-  const adjustIngredients = (n: number | undefined, ingredientPercent: number): void => {
-    if (n === undefined) {
-      updateIngredients(null)
-      return;
-    }
-    if (isNaN(n)) {
-      //todo ERROR
+  // curry apply formula 
+  const adjustIngredients = useCallback((i: Numberish, getPercent: (f: Formula) => number, key: keyof Ingredients) => {
+    if (!isValid(i) || !validateFormula(formula)) {
+      updateIngredients({
+        ...emptyIngredients(),
+        [key]: i
+      });
       return;
     }
 
-    // this needs special handler for water, which has amore complex calc
-    const flourMass: number = getFlourMass(n, ingredientPercent);
-    const adjustedIngredients: Ingredients = applyFormula(formula, flourMass);   
-    updateIngredients(adjustedIngredients);
-  }
+    const percent: number = getPercent(formula); 
+    const flour: number = getFlourMass(i, percent);
+    updateIngredients(applyFormula(formula, flour)); 
+  }, [formula, updateIngredients]);
 
   return(
     <>
@@ -42,7 +41,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         label={`Pre-Ferment (${unit})`}
         id={'pre-ferment'}
         value={levainMass}
-        updateValue={(n) => adjustIngredients(n, formula.levainPercent)}
+        setValue={(n) => adjustIngredients(n, f => f.levainPercent, 'levainMass')}
         enforceBounds
         precision={2}
         min={0}
@@ -51,7 +50,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         label={`Water (${unit})`}
         id={'water'}
         value={waterMass}
-        updateValue={(n) => adjustIngredients(n, formula.hydrationPercent)}
+        setValue={(n) => adjustIngredients(n, f => f.hydrationPercent, 'waterMass')}
         enforceBounds
         precision={2}
         min={0}
@@ -60,7 +59,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         label={`Salt (${unit})`}
         id={'salt'}
         value={saltMass}
-        updateValue={(n) => adjustIngredients(n, formula.saltPercent)}
+        setValue={(n) => adjustIngredients(n, f => f.saltPercent, 'saltMass')}
         enforceBounds
         precision={2}
         min={0}
@@ -69,7 +68,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         label={`Flour (${unit})`}
         id={'flour'}
         value={flourMass}
-        updateValue={(n) => adjustIngredients(n, 100)}
+        setValue={(n) => adjustIngredients(n, _f => 100, 'flourMass')}
         enforceBounds
         precision={2}
         min={0}

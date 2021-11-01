@@ -1,6 +1,15 @@
-.row {
+.table {
+  border-collapse: separate;
+  border-spacing: 2rem 0rem;
+}
+
+.table td:last-child {
+  text-align: end;
+}
+
+.container {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
+  flex-direction: column;
+  justify-items: start;
+  align-items: center;
 }

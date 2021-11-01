@@ -1,9 +1,10 @@
 import {Formula} from "../types/formula";
-import {Ingredients} from "../types/ingredients";
+import {Ingredients } from "../types/ingredients";
 
 export function getFlourMass(ingredientMass: number, ingredientPercent: number): number {
   return ingredientMass / (ingredientPercent / 100);
 }
+
 // assumes valid formula
 export function applyFormula(formula: Formula, flourMass: number): Ingredients {  
   const hydrationDecimal = formula.hydrationPercent / 100;
@@ -24,9 +25,8 @@ export function applyFormula(formula: Formula, flourMass: number): Ingredients {
 
 export function applyFormulaTDM(formula: Formula, totalDoughMass: number): Ingredients {
   const {saltPercent, hydrationPercent, levainPercent} = formula;
-
-  if (totalDoughMass < 1) {
-    throw new Error("Dough mass must be at least 1 gram.")
+  if (totalDoughMass < 0) {
+    throw new Error("Dough mass cannot be negative")
   }
 
   // +100 to include flour, which isn't represented strictly in the Formula
