@@ -23048,7 +23048,7 @@ $RefreshReg$(_c, "App");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./components/formulaForm":"02R9T","./components/ingredientsForm":"diqgc","./app.module.css":"5VQky","./components/numberInput":"6gNyj","./functions/applyFormula":"k9vVM","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"02R9T":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./components/formulaForm":"02R9T","./components/ingredientsForm":"diqgc","./app.module.css":"5VQky","./components/numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./functions/applyFormula":"k9vVM"}],"02R9T":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$4c55 = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23363,11 +23363,7 @@ $RefreshReg$(_c, "NumberInput");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","react":"6TuXu","./numberInput.module.css":"drgJS","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"drgJS":[function(require,module,exports) {
-module.exports["container"] = "_numberInput-module_container";
-module.exports["errorMsg"] = "_numberInput-module_errorMsg";
-
-},{}],"JacNc":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","react":"6TuXu","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","./numberInput.module.css":"drgJS"}],"JacNc":[function(require,module,exports) {
 exports.interopDefault = function(a) {
     return a && a.__esModule ? a : {
         default: a
@@ -23519,7 +23515,11 @@ function registerExportsForReactRefresh(module) {
     }
 }
 
-},{"react-refresh/runtime":"fNmB3"}],"diqgc":[function(require,module,exports) {
+},{"react-refresh/runtime":"fNmB3"}],"drgJS":[function(require,module,exports) {
+module.exports["container"] = "_numberInput-module_container";
+module.exports["errorMsg"] = "_numberInput-module_errorMsg";
+
+},{}],"diqgc":[function(require,module,exports) {
 var $parcel$ReactRefreshHelpers$b5af = require("@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js");
 var prevRefreshReg = window.$RefreshReg$;
 var prevRefreshSig = window.$RefreshSig$;
@@ -23637,7 +23637,7 @@ $RefreshReg$(_c, "IngredientsForm");
   window.$RefreshReg$ = prevRefreshReg;
   window.$RefreshSig$ = prevRefreshSig;
 }
-},{"react/jsx-runtime":"8xIwr","../../functions/applyFormula":"k9vVM","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J"}],"k9vVM":[function(require,module,exports) {
+},{"react/jsx-runtime":"8xIwr","../numberInput":"6gNyj","@parcel/transformer-js/src/esmodule-helpers.js":"JacNc","@parcel/transformer-react-refresh-wrap/lib/helpers/helpers.js":"5V79J","../../functions/applyFormula":"k9vVM"}],"k9vVM":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "getFlourMass", ()=>getFlourMass
