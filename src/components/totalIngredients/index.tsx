@@ -38,10 +38,8 @@ export const TotalIngredients = (props: TotalIngredientsProps) => {
 
   }, [limitingReagent, setLimitingReagent]);
 
-  /*
   const reagentInput = useCallback((props: Reagent) => {
     const {key, value} = props;
-    console.log('reagent input');
     return (
       <>
         {limitingReagent.key === key 
@@ -58,7 +56,6 @@ export const TotalIngredients = (props: TotalIngredientsProps) => {
       </>
     );
   }, [limitingReagent, setLimitingReagent]);
-  */
 
   const totalDoughMass = useMemo(() => {
     if (validateIngredients(ingredients)) {
@@ -88,8 +85,8 @@ export const TotalIngredients = (props: TotalIngredientsProps) => {
           <tr>
             <td>{getReagentLabel('flourMass')}</td>
             <td>
-              {/* reagentInput({key: 'flourMass', value: flourMass}) */}
-              {flourMass?.toFixed(2)}
+              {reagentInput({key: 'flourMass', value: flourMass})}
+              {/* {flourMass?.toFixed(2)} */}
             </td>
             <td>
               {reagentButton('flourMass', flourMass)}
@@ -124,9 +121,6 @@ export const TotalIngredients = (props: TotalIngredientsProps) => {
           <tr>
             <td>Total Dough</td>
             <td>{totalDoughMass?.toFixed(2)}</td>
-            <td>
-              {reagentButton('totalDoughMass', totalDoughMass)}
-            </td>
           </tr>
         </tfoot>
       </table>
