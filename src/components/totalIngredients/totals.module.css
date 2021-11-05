@@ -7,16 +7,27 @@
 }
 
 .table tbody td {
-  padding-bottom: 1rem;
+  /*padding-bottom: 1rem;*/
 }
 
-.table tfoot td {
+.table td {
+  line-height: 1.5em;
+}
+
+.table tbody tr:last-of-type td {
+  padding-bottom: 0.5em
+}
+.table tfoot tr:first-of-type td {
   border-top: solid 2px black;
-  padding-top: 1rem;
+  padding-top: 0.5em;
 }
 
-.table td:nth-child(2), th:nth-child(2) {
+.table td:nth-of-type(n-1), th:nth-of-type(n-1) {
   padding-right: 1rem;
+}
+
+.table td:nth-of-type(2) {
+  text-align: right;
 }
 
 .container {

@@ -34,6 +34,8 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
     updateIngredients(applyFormula(formula, flour)); 
   }, [formula, updateIngredients]);
 
+  const disable = !validateFormula(formula);
+
   return(
     <>
       <h2>Ingredients</h2>
@@ -45,6 +47,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         enforceBounds
         precision={2}
         min={0}
+        disabled={disable}
       />
       <NumberInput 
         label={`Water (${unit})`}
@@ -54,6 +57,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         enforceBounds
         precision={2}
         min={0}
+        disabled={disable}
       />
       <NumberInput 
         label={`Salt (${unit})`}
@@ -63,6 +67,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         enforceBounds
         precision={2}
         min={0}
+        disabled={disable}
       />
       <NumberInput 
         label={`Flour (${unit})`}
@@ -72,6 +77,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         enforceBounds
         precision={2}
         min={0}
+        disabled={disable}
       />
     </>
   )
