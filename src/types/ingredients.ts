@@ -1,4 +1,3 @@
-import { Inclusion } from "./inclusion";
 import { Nullable } from "./nullable";
 import { isValid, Numberish } from "./numberish";
 
@@ -10,12 +9,8 @@ export interface Ingredients {
 
   /*
   flourComposition?: FlourComposition;
+  mixins?: 
    */
-  mixins?: Inclusion[];
-}
-
-export interface MixinAmounts {
-  [mixinName: string]: number;
 }
 
 export function emptyIngredients(): Nullable<Ingredients> {

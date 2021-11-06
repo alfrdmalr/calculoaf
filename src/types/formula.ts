@@ -5,19 +5,20 @@ export interface Formula {
   hydrationPercent: number;
   levainPercent: number;
   saltPercent: number;
+  //flourPercent: 100; // necessary?
   //absoluteFormula?: boolean; // whether the flour/water from levain is included in calcs
   //preFermentedFlourPercent?: number;
   flourComposition?: FlourComposition;
   mixins?: MixinPercentages;
-  levainFormula?: Omit<Formula, 'absoluteFormula' | 'saltPercent' | 'flourComposition' | 'mixins'>
+  //levainFormula?: Omit<Formula, 'absoluteFormula' | 'saltPercent' | 'flourComposition' | 'mixins'>
 }
 
 export interface FlourComposition {
-  [flourPercent: string]: number
+  [flourType: string]: number
 }
 
 export interface MixinPercentages {
-  [mixinPercent: string]: number;
+  [mixinName: string]: number;
 }
 
 export const validateFormula = (f: Nullable<Formula>): f is Formula => {
@@ -27,4 +28,9 @@ export const validateFormula = (f: Nullable<Formula>): f is Formula => {
     && isValid(f.hydrationPercent)
   );
   // ...and all mixins
+}
+
+
+const test: FlourComposition = {
+
 }
