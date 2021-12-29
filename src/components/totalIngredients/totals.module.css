@@ -6,10 +6,6 @@
   text-align: end;
 }
 
-.table tbody td {
-  /*padding-bottom: 1rem;*/
-}
-
 .table td {
   line-height: 1.5em;
 }

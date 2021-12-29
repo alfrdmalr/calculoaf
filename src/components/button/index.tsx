@@ -1,20 +1,20 @@
 import React from 'react';
 
 export interface ButtonProps {
-  label: string;
+  children: string | JSX.Element;
   onClick: () => void;
   disabled?: boolean;
 }
 
 export const Button = (props: ButtonProps) => {
-  const {label, onClick, disabled} = props;
+  const {onClick, disabled} = props;
 
   return(
     <button
       disabled={disabled}
       onClick={onClick}
     >
-      {label}
+      {props.children}
     </button>
   )
 }

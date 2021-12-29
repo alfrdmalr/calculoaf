@@ -1,32 +1,28 @@
-import { Nullable } from "./nullable";
+import { Inclusion, validInclusionReducer } from "./inclusion";
 import { isValid, Numberish } from "./numberish";
 
 export interface Ingredients {
-  waterMass: number;
-  levainMass: number;
-  saltMass: number;
-  flourMass: number;
+  waterMass: Numberish;
+  levainMass: Numberish;
+  saltMass: Numberish;
+  flourMass: Numberish;
 
   /*
   flourComposition?: FlourComposition;
-  mixins?: 
    */
+  inclusions: Inclusion[];
 }
 
-export function emptyIngredients(): Nullable<Ingredients> {
-  return {
-    levainMass: null,
-    flourMass: null,
-    waterMass: null,
-    saltMass: null
-  }
-};
+export interface MixinAmounts {
+  [mixinName: string]: number;
+}
 
-export function validateIngredients(i: Nullable<Ingredients>): i is ({
+export function validateIngredients(i: Ingredients): i is ({
   saltMass: number, 
   flourMass: number, 
   waterMass: number, 
-  levainMass: number
+  levainMass: number,
+  inclusions: Inclusion[]
 }) {
 
   return (true
@@ -34,5 +30,6 @@ export function validateIngredients(i: Nullable<Ingredients>): i is ({
     && isValid(i.flourMass) 
     && isValid(i.waterMass) 
     && isValid(i.levainMass)
- ); 
+    && i.inclusions.reduce(validInclusionReducer, true)
+  ); 
 }

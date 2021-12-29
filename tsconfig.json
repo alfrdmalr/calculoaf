@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "module": "ESnext",
-    "target": "ES5",
+    "target": "ES6",
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
@@ -22,5 +22,4 @@
     "esnext"
   ],
   "include": ["src"]
-
 }

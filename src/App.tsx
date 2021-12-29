@@ -1,15 +1,18 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {FormulaForm} from './components/formulaForm';
-import styles from "./app.module.css";
 import {Formula, validateFormula} from './types/formula';
-import {emptyIngredients, Ingredients} from './types/ingredients';
+import {Ingredients} from './types/ingredients';
 import {NumberInput} from './components/numberInput';
 import {applyFormula, applyFormulaTDM, getFlourMass} from './functions/applyFormula';
-import { Nullable } from './types/nullable';
 import { isValid} from './types/numberish';
 import { TotalIngredients } from './components/totalIngredients';
 import { getReagentLabel, Reagent } from './types/reagent';
 import { IngredientsForm } from './components/ingredientsForm';
+import { Inclusion } from './types/inclusion';
+import { Button } from './components/button';
+
+import styles from "./app.module.css";
+import { emptyIngredients } from './functions/emptyIngredients';
 
 if (module.hot) {
   module.hot.accept();
@@ -22,42 +25,57 @@ export const App = () => {
     value: 2070, 
     key: 'totalDoughMass'
   });
-  const [ingredients, setIngredients] = useState<Nullable<Ingredients>>(emptyIngredients());
-  const [formula, setFormula] = useState<Nullable<Formula>>({
+  const [formula, setFormula] = useState<Formula>({
     hydrationPercent: 80,
     levainPercent: 25,
-    saltPercent: 2
+    saltPercent: 2,
+    inclusions: []
   });
+  const inclusions = useMemo(() => formula.inclusions, [formula]);
+  const setInclusions = (inclusions: Inclusion[]) => {
+    setFormula(prev => {
+      return {
+        ...prev,
+        inclusions: inclusions
+      }
+    });
+  }
+  const [ingredients, setIngredients] = useState<Ingredients>(emptyIngredients(formula));
+  const [mixinName, setMixinName] = useState<string>('');
 
-  const handleReagentChange = useCallback((r: Reagent, formula: Formula) => {
-    let newIngredients = emptyIngredients();
+  const handleReagentChange = useCallback((r: Reagent, f: Formula) => {
+    let newIngredients = emptyIngredients(f);
 
     if (!isValid(r.value)) {
+      // need a 'null everything' function
       setIngredients(newIngredients);
       return;
     }
 
     switch(r.key) {
       case 'totalDoughMass':
-        newIngredients = applyFormulaTDM(formula, r.value);
+        newIngredients = applyFormulaTDM(f, r.value);
         break;
       case 'flourMass':
-        newIngredients = applyFormula(formula, r.value);
+        newIngredients = applyFormula(f, r.value);
         break;
       case 'levainMass':
-        newIngredients = applyFormula(formula, getFlourMass(r.value, formula.levainPercent));
+        newIngredients = applyFormula(f, getFlourMass(r.value, f.levainPercent));
         break;
       case 'waterMass':
-        newIngredients = applyFormula(formula, getFlourMass(r.value, formula.hydrationPercent));
+        newIngredients = applyFormula(f, getFlourMass(r.value, f.hydrationPercent));
         break;
       case 'saltMass':
-        newIngredients = applyFormula(formula, getFlourMass(r.value, formula.saltPercent));
+        newIngredients = applyFormula(f, getFlourMass(r.value, f.saltPercent));
         break;
       default:
         break;
     }
 
-    setIngredients(newIngredients)
+    setIngredients(prev => ({
+      ...prev,
+      ...newIngredients,
+    }));
   }, []);
 
   useEffect(() => {
@@ -65,11 +83,17 @@ export const App = () => {
 
     if (!validateFormula(formula) || 
       !isValid(value)) {
-      setIngredients(emptyIngredients());
+      setIngredients(emptyIngredients(formula));
     } else {
       handleReagentChange({key, value}, formula);
     }
   }, [formula, limitingReagent]);
+
+  /*
+  const isValidInclusionName = (s: string): boolean => {
+    return s !== "" && (inclusions.findIndex((i: Inclusion) => i.name === s) < 0);
+  }
+   */
 
   return(
     <div className={styles.main}>
@@ -78,10 +102,7 @@ export const App = () => {
 
       <NumberInput 
         label={
-          <>
-            <span className="fas fa-star" />
             <b> {getReagentLabel(limitingReagent.key)} Mass ({unit})</b>
-          </>
         }
         id={'dough-mass'}
         value={limitingReagent.value}
@@ -89,7 +110,21 @@ export const App = () => {
         enforceBounds
         precision={0}
         setValue={n => setLimitingReagent(prev => ({key: prev.key, value: n}))}
+        disabled={!validateFormula(formula)}
       />
+
+    <Button 
+      onClick={() => {
+        setInclusions([
+          ...inclusions,
+          {name: 'New Inclusion', value: null, id: Date.now()} // better id system
+        ]);
+      }}
+    >
+      <>
+        <span className='fas fa-plus' /><span> Add Inclusion</span>
+      </>
+      </Button>
 
       <div className={styles.forms}>
         <div className={styles.formContainer}>
@@ -107,13 +142,11 @@ export const App = () => {
         </div>
       </div>
 
-        <div>
-          <TotalIngredients 
-            ingredients={ingredients}
-            setLimitingReagent={setLimitingReagent}
-            limitingReagent={limitingReagent}
-          />
-        </div>
+      <div>
+        <TotalIngredients 
+          ingredients={ingredients}
+        />
+      </div>
 
     </div>
   )
