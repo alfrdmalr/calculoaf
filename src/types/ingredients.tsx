@@ -18,21 +18,21 @@ export function emptyIngredients(): Nullable<Ingredients> {
     levainMass: null,
     flourMass: null,
     waterMass: null,
-    saltMass: null
-  }
-};
+    saltMass: null,
+  };
+}
 
-export function validateIngredients(i: Nullable<Ingredients>): i is ({
-  saltMass: number, 
-  flourMass: number, 
-  waterMass: number, 
-  levainMass: number
-}) {
-
-  return (true
-    && isValid(i.saltMass) 
-    && isValid(i.flourMass) 
-    && isValid(i.waterMass) 
-    && isValid(i.levainMass)
- ); 
+export function validateIngredients(i: Nullable<Ingredients>): i is {
+  saltMass: number;
+  flourMass: number;
+  waterMass: number;
+  levainMass: number;
+} {
+  return (
+    true &&
+    isValid(i.saltMass) &&
+    isValid(i.flourMass) &&
+    isValid(i.waterMass) &&
+    isValid(i.levainMass)
+  );
 }

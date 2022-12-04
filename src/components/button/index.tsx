@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface ButtonProps {
   label: string;
@@ -7,14 +7,11 @@ export interface ButtonProps {
 }
 
 export const Button = (props: ButtonProps) => {
-  const {label, onClick, disabled} = props;
+  const { label, onClick, disabled } = props;
 
-  return(
-    <button
-      disabled={disabled}
-      onClick={onClick}
-    >
+  return (
+    <button disabled={disabled} onClick={onClick}>
       {label}
     </button>
-  )
-}
+  );
+};

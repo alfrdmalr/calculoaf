@@ -1,4 +1,4 @@
-import { Formula } from './formula';
+import { Formula } from "./formula";
 
 export interface Recipe {
   formula: Formula;
