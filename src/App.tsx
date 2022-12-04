@@ -6,13 +6,9 @@ import {emptyIngredients, Ingredients} from './types/ingredients';
 import {NumberInput} from './components/numberInput';
 import {applyFormula, applyFormulaTDM, getFlourMass} from './functions/applyFormula';
 import { Nullable } from './types/nullable';
-import { isValid, Numberish } from './types/numberish';
+import { isValid } from './types/numberish';
 import { TotalIngredients } from './components/totalIngredients';
 import { getReagentLabel, Reagent } from './types/reagent';
-
-if (module.hot) {
-  module.hot.accept();
-}
 
 const unit: string = "g";
 
