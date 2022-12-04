@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
-import {Formula} from '../../types/formula';
-import { Nullable } from '../../types/nullable';
-import { Numberish } from '../../types/numberish';
-import {NumberInput} from '../numberInput';
+import React, { useCallback } from "react";
+import { Formula } from "../../types/formula";
+import { Nullable } from "../../types/nullable";
+import { Numberish } from "../../types/numberish";
+import { NumberInput } from "../numberInput";
 
 export interface FormulaFormProps {
   formula: Nullable<Formula>;
@@ -10,53 +10,56 @@ export interface FormulaFormProps {
 }
 
 export const FormulaForm = (props: FormulaFormProps) => {
-  const {updateFormula, formula} = props;
-  const {hydrationPercent, levainPercent, saltPercent} = formula;
+  const { updateFormula, formula } = props;
+  const { hydrationPercent, levainPercent, saltPercent } = formula;
 
-  const updateFormulaParameter = useCallback((key: keyof Formula, n: Numberish) => {
-    const f: Nullable<Formula> = {
-      ...formula,
-      [key]: n
-    };
+  const updateFormulaParameter = useCallback(
+    (key: keyof Formula, n: Numberish) => {
+      const f: Nullable<Formula> = {
+        ...formula,
+        [key]: n,
+      };
 
-    updateFormula(f);
-  }, [formula, updateFormula]);
+      updateFormula(f);
+    },
+    [formula, updateFormula]
+  );
 
-  const unit = '%';
+  const unit = "%";
 
-  return(
+  return (
     <>
       <h2>Formula</h2>
-      <NumberInput 
+      <NumberInput
         label={`Pre-Ferment (${unit})`}
-        id={'pre-ferment-formula'}
+        id={"pre-ferment-formula"}
         value={levainPercent}
-        setValue={n => updateFormulaParameter('levainPercent', n)}
+        setValue={(n) => updateFormulaParameter("levainPercent", n)}
         required
         enforceBounds
         min={0}
         max={100}
       />
-      <NumberInput 
+      <NumberInput
         label={`Hydration (${unit})`}
-        id={'hydration'}
+        id={"hydration"}
         value={hydrationPercent}
-        setValue={n => updateFormulaParameter('hydrationPercent', n)}
+        setValue={(n) => updateFormulaParameter("hydrationPercent", n)}
         required
         enforceBounds
         min={0}
         max={100}
       />
-      <NumberInput 
+      <NumberInput
         label={`Salt (${unit})`}
-        id={'salt'}
+        id={"salt"}
         value={saltPercent}
-        setValue={n => updateFormulaParameter('saltPercent', n)}
+        setValue={(n) => updateFormulaParameter("saltPercent", n)}
         required
         enforceBounds
         min={0}
         max={100}
       />
     </>
-  )
-}
+  );
+};

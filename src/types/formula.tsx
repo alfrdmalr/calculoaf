@@ -9,11 +9,14 @@ export interface Formula {
   //preFermentedFlourPercent?: number;
   flourComposition?: FlourComposition;
   mixins?: MixinPercentages;
-  levainFormula?: Omit<Formula, 'absoluteFormula' | 'saltPercent' | 'flourComposition' | 'mixins'>
+  levainFormula?: Omit<
+    Formula,
+    "absoluteFormula" | "saltPercent" | "flourComposition" | "mixins"
+  >;
 }
 
 export interface FlourComposition {
-  [flourPercent: string]: number
+  [flourPercent: string]: number;
 }
 
 export interface MixinPercentages {
@@ -21,10 +24,11 @@ export interface MixinPercentages {
 }
 
 export const validateFormula = (f: Nullable<Formula>): f is Formula => {
-  return (true
-    && isValid(f.saltPercent) 
-    && isValid(f.levainPercent)
-    && isValid(f.hydrationPercent)
+  return (
+    true &&
+    isValid(f.saltPercent) &&
+    isValid(f.levainPercent) &&
+    isValid(f.hydrationPercent)
   );
   // ...and all mixins
-}
+};

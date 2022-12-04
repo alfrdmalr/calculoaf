@@ -15,7 +15,8 @@
   padding-top: 1rem;
 }
 
-.table td:nth-child(2), th:nth-child(2) {
+.table td:nth-child(2),
+th:nth-child(2) {
   padding-right: 1rem;
 }
 

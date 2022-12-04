@@ -2,7 +2,7 @@
   "compilerOptions": {
     "jsx": "react",
     "module": "ESnext",
-    "target": "ES5",
+    "target": "ES6",
     "sourceMap": true,
     "moduleResolution": "node",
     "strict": true,
@@ -16,11 +16,6 @@
       }
     ]
   },
-  "lib": [
-    "dom",
-    "dom.iterable",
-    "esnext"
-  ],
+  "lib": ["dom", "dom.iterable", "esnext"],
   "include": ["src"]
-
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export interface TextInputProps {
   label: string;
@@ -8,14 +8,16 @@ export interface TextInputProps {
 }
 
 export const TextInput = (props: TextInputProps) => {
-  const {label, id, value, onChange} = props;
+  const { label, id, value, onChange } = props;
 
-  return(
+  return (
     <>
-      <label htmlFor={id}>
-        {label}
-      </label>
-      <input type='text' value={value} onChange={e => onChange(e.target.value)} />
+      <label htmlFor={id}>{label}</label>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </>
-  )
-}
+  );
+};
