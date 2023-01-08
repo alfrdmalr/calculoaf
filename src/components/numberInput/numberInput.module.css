@@ -1,3 +1,19 @@
+input {
+  background-color: var(--bg-primary);
+  color: var(--fg-primary);
+  border: 2px solid var(--fg-primary);
+  border-radius: 0.5rem;
+  padding: 0.3rem;
+  margin: 0.25rem 0;
+  font-family: var(--font-primary);
+  font-size: 20px;
+}
+
+input:focus {
+  outline: 2px solid var(--fg-focus);
+  border-color: var(--fg-focus);
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -8,7 +24,7 @@
 .errorMsg {
   color: red;
   font-style: italic;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   margin: 0;
 }
 

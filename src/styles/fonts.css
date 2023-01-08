@@ -1,0 +1,17 @@
+@import url("https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;600;800&display=swap");
+
+:root {
+  --font-primary: "Inconsolata", monospace;
+}
+
+b,
+strong {
+  font-weight: 600;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+}

@@ -5,7 +5,7 @@
     "build": "node build.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
-    "format": "prettier --write ."
+    "format": "prettier --write --cache ."
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

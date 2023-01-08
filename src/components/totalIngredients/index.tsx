@@ -4,6 +4,7 @@ import { Ingredients, validateIngredients } from "../../types/ingredients";
 import { Nullable } from "../../types/nullable";
 import { Numberish } from "../../types/numberish";
 import styles from "./totals.module.css";
+import { Button } from "../button";
 
 export interface TotalIngredientsProps {
   ingredients: Nullable<Ingredients>;
@@ -21,16 +22,14 @@ export const TotalIngredients = (props: TotalIngredientsProps) => {
 
   const reagentButton = useCallback(
     (key: ReagentType, value: Numberish) => {
+      return null;
       return (
-        <>
-          {limitingReagent !== key && (
-            <button
-              onClick={() => setLimitingReagent({ key: key, value: value })}
-            >
-              <span className="fas fa-star" />
-            </button>
-          )}
-        </>
+        <Button
+          disabled={limitingReagent === key}
+          onClick={() => setLimitingReagent({ key: key, value: value })}
+        >
+          <span className="fas fa-star" />
+        </Button>
       );
     },
     [limitingReagent, setLimitingReagent]
