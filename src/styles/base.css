@@ -1,0 +1,7 @@
+html {
+  font-family: var(--font-primary);
+  color: var(--fg-primary);
+  background-color: var(--bg-primary);
+  font-size: 20px;
+  padding: 1rem;
+}

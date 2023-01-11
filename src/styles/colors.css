@@ -1,0 +1,16 @@
+:root {
+  /* 
+   * dark mode
+   */
+  --fg-focus: #8282f2;
+  --fg-primary: #d2d2d2;
+  --bg-primary: #2a2f2f;
+  --error: #f28282;
+
+  /*
+   * light mode
+  --fg-focus: #8282f2;
+  --fg-primary: #2a2f2f;
+  --bg-primary: #efffff;
+  */
+}

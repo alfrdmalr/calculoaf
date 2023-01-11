@@ -6,10 +6,6 @@
   text-align: end;
 }
 
-.table tbody td {
-  padding-bottom: 1rem;
-}
-
 .table tfoot td {
   border-top: solid 2px black;
   padding-top: 1rem;

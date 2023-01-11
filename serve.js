@@ -15,6 +15,8 @@ const serveOptions = {
   servedir: "dist",
 };
 
+const myPort = 3000;
+
 // Start esbuild's server on a random local port
 esbuild.serve(serveOptions, buildOptions).then((result) => {
   // The result tells us where esbuild's local server is
@@ -48,5 +50,7 @@ esbuild.serve(serveOptions, buildOptions).then((result) => {
       // Forward the body of the request to esbuild
       req.pipe(proxyReq, { end: true });
     })
-    .listen(3000);
+    .listen(myPort);
 });
+
+console.log(`server listening on ${myPort}`);
