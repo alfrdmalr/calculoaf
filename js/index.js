@@ -2640,11 +2640,11 @@
       if (true) {
         (function() {
           "use strict";
-          var React6 = require_react();
+          var React7 = require_react();
           var _assign = require_object_assign();
           var Scheduler = require_scheduler();
           var tracing = require_tracing();
-          var ReactSharedInternals = React6.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           function warn(format) {
             {
               for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -2676,7 +2676,7 @@
               Function.prototype.apply.call(console[level], console, argsWithFormat);
             }
           }
-          if (!React6) {
+          if (!React7) {
             {
               throw Error("ReactDOM was loaded before React. Make sure you load the React package before loading ReactDOM.");
             }
@@ -4012,7 +4012,7 @@
           var didWarnInvalidChild = false;
           function flattenChildren(children) {
             var content = "";
-            React6.Children.forEach(children, function(child) {
+            React7.Children.forEach(children, function(child) {
               if (child == null) {
                 return;
               }
@@ -4023,7 +4023,7 @@
           function validateProps(element, props) {
             {
               if (typeof props.children === "object" && props.children !== null) {
-                React6.Children.forEach(props.children, function(child) {
+                React7.Children.forEach(props.children, function(child) {
                   if (child == null) {
                     return;
                   }
@@ -11226,7 +11226,7 @@
           }
           var fakeInternalInstance = {};
           var isArray = Array.isArray;
-          var emptyRefsObject = new React6.Component().refs;
+          var emptyRefsObject = new React7.Component().refs;
           var didWarnAboutStateAssignmentForComponent;
           var didWarnAboutUninitializedState;
           var didWarnAboutGetSnapshotBeforeUpdateWithoutDidUpdate;
@@ -20823,11 +20823,11 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   });
 
   // src/index.tsx
-  var import_react5 = __toESM(require_react());
+  var import_react6 = __toESM(require_react());
   var import_react_dom = __toESM(require_react_dom());
 
   // src/App.tsx
-  var import_react4 = __toESM(require_react());
+  var import_react5 = __toESM(require_react());
 
   // src/components/formulaForm/index.tsx
   var import_react2 = __toESM(require_react());
@@ -20840,23 +20840,39 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     return !(n !== 0 && !n);
   }
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-21518-ZIh0eG7QwO1C/calculoaf/src/components/numberInput/numberInput.module.css.js
-  var digest = "92389ae6ad19fc0b2d6a875c95fc2357df28f7f8ad58ac4bb339c05fec3f72b1";
-  var css = `._container_j37er_1 {
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-I7WayzarAmXy/calculoaf/src/components/numberInput/numberInput.module.css.js
+  var digest = "bb37fda5d02eff8bde36176b613e6757545b920487ea6ce4988d82211ff7a751";
+  var css = `input {
+  background-color: var(--bg-primary);
+  color: var(--fg-primary);
+  border: 2px solid var(--fg-primary);
+  border-radius: 0.5rem;
+  padding: 0.3rem;
+  margin: 0.25rem 0;
+  font-family: var(--font-primary);
+  font-size: 20px;
+}
+
+input:focus {
+  outline: 2px solid var(--fg-focus);
+  border-color: var(--fg-focus);
+}
+
+._container_18xip_17 {
   display: flex;
   flex-direction: column;
   justify-content: start;
   align-items: start;
 }
 
-._errorMsg_j37er_8 {
+._errorMsg_18xip_24 {
   color: red;
   font-style: italic;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   margin: 0;
 }
 
-._error_j37er_8 {
+._error_18xip_24 {
   border: 2px solid red;
 }
 `;
@@ -20871,7 +20887,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
       document.head.appendChild(el);
     }
   })();
-  var numberInput_module_css_default = { "container": "_container_j37er_1", "errorMsg": "_errorMsg_j37er_8", "error": "_error_j37er_8" };
+  var numberInput_module_css_default = { "container": "_container_18xip_17", "errorMsg": "_errorMsg_18xip_24", "error": "_error_18xip_24" };
 
   // src/components/numberInput/index.tsx
   var NumberInput = (props) => {
@@ -20904,70 +20920,88 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     const pattern = (0, import_react.useMemo)(() => {
       return RegExp(`^${allowNegative ? "-?" : ""}[0-9]*[.,]?[0-9]*$`);
     }, [allowNegative]);
-    const isValidFormat = (0, import_react.useCallback)((s) => {
-      return pattern.test(s);
-    }, [pattern]);
-    const updateInternalValue = (0, import_react.useCallback)((n) => {
-      if (!isValid(n)) {
+    const isValidFormat = (0, import_react.useCallback)(
+      (s) => {
+        return pattern.test(s);
+      },
+      [pattern]
+    );
+    const updateInternalValue = (0, import_react.useCallback)(
+      (n) => {
+        if (!isValid(n)) {
+          setInternalValue(n);
+          return;
+        }
+        if (max != null && n > max) {
+          if (enforceBounds) {
+            setInternalValue(max);
+          } else {
+            setError(true);
+          }
+          return;
+        }
+        if (min != null && n < min) {
+          if (enforceBounds) {
+            setInternalValue(min);
+          } else {
+            setError(true);
+          }
+          return;
+        }
         setInternalValue(n);
-        return;
-      }
-      if (max != null && n > max) {
-        if (enforceBounds) {
-          setInternalValue(max);
+      },
+      [enforceBounds, min, max]
+    );
+    const onDisplayChange = (0, import_react.useCallback)(
+      (input) => {
+        setDisplayValue(input);
+        if (input === "") {
+          setInternalValue(null);
         } else {
-          setError(true);
+          const n = parseFloat(input);
+          if (n !== internalValue) {
+            updateInternalValue(n);
+          }
         }
-        return;
-      }
-      if (min != null && n < min) {
-        if (enforceBounds) {
-          setInternalValue(min);
-        } else {
-          setError(true);
+      },
+      [internalValue]
+    );
+    const onInputChange = (0, import_react.useCallback)(
+      (e) => {
+        const val = e.target.value;
+        if (isValidFormat(val)) {
+          onDisplayChange(val);
         }
-        return;
-      }
-      setInternalValue(n);
-    }, [enforceBounds, min, max]);
-    const onDisplayChange = (0, import_react.useCallback)((input) => {
-      setDisplayValue(input);
-      if (input === "") {
-        setInternalValue(null);
-      } else {
-        const n = parseFloat(input);
-        if (n !== internalValue) {
-          updateInternalValue(n);
-        }
-      }
-    }, [internalValue]);
-    const onInputChange = (0, import_react.useCallback)((e) => {
-      const val = e.target.value;
-      if (isValidFormat(val)) {
-        onDisplayChange(val);
-      }
-    }, [isValidFormat, displayValue]);
+      },
+      [isValidFormat, displayValue]
+    );
     const onBlur = (0, import_react.useCallback)(() => {
       setValue(internalValue);
     }, [setValue, internalValue]);
-    const getDisplayValue = (0, import_react.useCallback)((n) => {
-      if (n === null) {
-        return "";
-      } else if (isNaN(n)) {
-        return displayValue;
-      } else {
-        return n.toFixed(precision);
-      }
-    }, [displayValue]);
-    const handleError = (0, import_react.useCallback)((value2) => {
-      if (value2 === null) {
-        setError(!!required);
-      } else if (isNaN(value2)) {
-        setError(true);
-      } else {
-        setError(false);
-      }
-    }, [required]);
+    const getDisplayValue = (0, import_react.useCallback)(
+      (n) => {
+        if (n === null) {
+          return "";
+        } else if (isNaN(n)) {
+          return displayValue;
+        } else {
+          return n.toFixed(precision);
+        }
+      },
+      [displayValue]
+    );
+    const handleError = (0, import_react.useCallback)(
+      (value2) => {
+        if (value2 === null) {
+          setError(!!required);
+        } else if (isNaN(value2)) {
+          setError(true);
+        } else {
+          setError(false);
+        }
+      },
+      [required]
+    );
     (0, import_react.useEffect)(() => {
       setDisplayValue(getDisplayValue(value));
       updateInternalValue(value);
@@ -20993,12 +21027,15 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
   var FormulaForm = (props) => {
     const { updateFormula, formula } = props;
     const { hydrationPercent, levainPercent, saltPercent } = formula;
-    const updateFormulaParameter = (0, import_react2.useCallback)((key, n) => {
-      const f = __spreadProps(__spreadValues({}, formula), {
-        [key]: n
-      });
-      updateFormula(f);
-    }, [formula, updateFormula]);
+    const updateFormulaParameter = (0, import_react2.useCallback)(
+      (key, n) => {
+        const f = __spreadProps(__spreadValues({}, formula), {
+          [key]: n
+        });
+        updateFormula(f);
+      },
+      [formula, updateFormula]
+    );
     const unit2 = "%";
     return /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("h2", null, "Formula"), /* @__PURE__ */ import_react2.default.createElement(
       NumberInput,
@@ -21039,24 +21076,24 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     ));
   };
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-21518-a4CFTXkjj3et/calculoaf/src/app.module.css.js
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-ZuMrJrhtR4qa/calculoaf/src/app.module.css.js
   var digest2 = "3f8162291e7a8a04f79eba08d7e81f4bc5f059e20f7e84cf611f308bbc55c3dc";
-  var css2 = `._main_fmzcu_1 {
+  var css2 = `._main_1ylye_1 {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   justify-content: start;
 }
 
-._forms_fmzcu_8 {
+._forms_1ylye_8 {
   display: flex;
   flex-direction: row;
-  align-items: start; 
+  align-items: start;
   justify-content: space-evenly;
   width: 100%;
 }
 
-._formContainer_fmzcu_16 {
+._formContainer_1ylye_16 {
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -21078,7 +21115,7 @@ input {
       document.head.appendChild(el);
     }
   })();
-  var app_module_css_default = { "main": "_main_fmzcu_1", "forms": "_forms_fmzcu_8", "formContainer": "_formContainer_fmzcu_16" };
+  var app_module_css_default = { "main": "_main_1ylye_1", "forms": "_forms_1ylye_8", "formContainer": "_formContainer_1ylye_16" };
 
   // src/types/formula.tsx
   var validateFormula = (f) => {
@@ -21127,7 +21164,7 @@ input {
   }
 
   // src/components/totalIngredients/index.tsx
-  var import_react3 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
 
   // src/types/reagent.tsx
   function getReagentLabel(key) {
@@ -21145,30 +21182,27 @@ input {
     }
   }
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-21518-RZL1fuE3aotx/calculoaf/src/components/totalIngredients/totals.module.css.js
-  var digest3 = "893075b765c03649451e96329d44b8e882b0746aed76333b16dc4dbcdcd7db28";
-  var css3 = `._table_ahfdc_1 {
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-jVBMWCFoIAUd/calculoaf/src/components/totalIngredients/totals.module.css.js
+  var digest3 = "1b9356ba963e3aabf7d2d29f31224cd303c0859143ab87934d5a9664b53005eb";
+  var css3 = `._table_1320a_1 {
   border-collapse: collapse;
 }
 
-._table_ahfdc_1 td:last-child {
+._table_1320a_1 td:last-child {
   text-align: end;
 }
 
-._table_ahfdc_1 tbody td {
-  padding-bottom: 1rem;
-}
-
-._table_ahfdc_1 tfoot td {
+._table_1320a_1 tfoot td {
   border-top: solid 2px black;
   padding-top: 1rem;
 }
 
-._table_ahfdc_1 td:nth-child(2), th:nth-child(2) {
+._table_1320a_1 td:nth-child(2),
+th:nth-child(2) {
   padding-right: 1rem;
 }
 
-._container_ahfdc_22 {
+._container_1320a_19 {
   display: flex;
   flex-direction: column;
   justify-items: start;
@@ -21186,45 +21220,94 @@ input {
       document.head.appendChild(el);
     }
   })();
-  var totals_module_css_default = { "table": "_table_ahfdc_1", "container": "_container_ahfdc_22" };
+  var totals_module_css_default = { "table": "_table_1320a_1", "container": "_container_1320a_19" };
+
+  // src/components/button/index.tsx
+  var import_react3 = __toESM(require_react());
+
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-UOADg174ryIC/calculoaf/src/components/button/button.module.css.js
+  var digest4 = "bdd8e54d6dcd4d8b7e83d823fe0c7949e5f98d050da34e8d5fa357b2223356ac";
+  var css4 = `._button_1spq1_1 {
+  background-color: var(--fg-primary);
+  color: var(--bg-primary);
+  border: 2px solid var(--fg-primary);
+  border-radius: 0.5rem;
+  margin: 0.25rem;
+  padding: 0.3rem;
+  font-family: var(--font-primary);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+button:focus {
+  outline: 3px solid var(--fg-focus);
+  border-color: var(--fg-focus);
+}
+`;
+  (function() {
+    if (typeof document === "undefined") {
+      return;
+    }
+    if (!document.getElementById(digest4)) {
+      var el = document.createElement("style");
+      el.id = digest4;
+      el.textContent = css4;
+      document.head.appendChild(el);
+    }
+  })();
+  var button_module_css_default = { "button": "_button_1spq1_1" };
+
+  // src/components/button/index.tsx
+  var Button = (props) => {
+    const { children, onClick, disabled } = props;
+    return /* @__PURE__ */ import_react3.default.createElement("button", { className: button_module_css_default.button, disabled, onClick }, children);
+  };
 
   // src/components/totalIngredients/index.tsx
   var TotalIngredients = (props) => {
     const { setLimitingReagent, limitingReagent, ingredients } = props;
-    const {
-      levainMass,
-      flourMass,
-      waterMass,
-      saltMass
-    } = ingredients;
+    const { levainMass, flourMass, waterMass, saltMass } = ingredients;
     const unit2 = "g";
-    const reagentButton = (0, import_react3.useCallback)((key, value) => {
-      return /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, limitingReagent !== key && /* @__PURE__ */ import_react3.default.createElement("button", { onClick: () => setLimitingReagent({ key, value }) }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "fas fa-star" })));
-    }, [limitingReagent, setLimitingReagent]);
-    const totalDoughMass = (0, import_react3.useMemo)(() => {
+    const reagentButton = (0, import_react4.useCallback)(
+      (key, value) => {
+        return null;
+        return /* @__PURE__ */ import_react4.default.createElement(
+          Button,
+          {
+            disabled: limitingReagent === key,
+            onClick: () => setLimitingReagent({ key, value })
+          },
+          /* @__PURE__ */ import_react4.default.createElement("span", { className: "fas fa-star" })
+        );
+      },
+      [limitingReagent, setLimitingReagent]
+    );
+    const totalDoughMass = (0, import_react4.useMemo)(() => {
       if (validateIngredients(ingredients)) {
         return 0 + ingredients.levainMass + ingredients.flourMass + ingredients.saltMass + ingredients.waterMass;
       } else {
         return null;
       }
     }, [ingredients]);
-    return /* @__PURE__ */ import_react3.default.createElement("div", { className: totals_module_css_default.container }, /* @__PURE__ */ import_react3.default.createElement("h2", null, "Total Ingredients"), /* @__PURE__ */ import_react3.default.createElement("table", { className: totals_module_css_default.table }, /* @__PURE__ */ import_react3.default.createElement("tbody", null, /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("th", null), /* @__PURE__ */ import_react3.default.createElement("th", null, "Ingredient Name"), /* @__PURE__ */ import_react3.default.createElement("th", null, "Mass (", unit2, ")")), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, reagentButton("flourMass", flourMass)), /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("flourMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, flourMass == null ? void 0 : flourMass.toFixed(2))), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, reagentButton("waterMass", waterMass)), /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("waterMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, waterMass == null ? void 0 : waterMass.toFixed(2))), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, reagentButton("levainMass", levainMass)), /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("levainMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, levainMass == null ? void 0 : levainMass.toFixed(2))), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, reagentButton("saltMass", saltMass)), /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("saltMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, saltMass == null ? void 0 : saltMass.toFixed(2)))), /* @__PURE__ */ import_react3.default.createElement("tfoot", null, /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, reagentButton("totalDoughMass", totalDoughMass)), /* @__PURE__ */ import_react3.default.createElement("td", null, "Total Dough"), /* @__PURE__ */ import_react3.default.createElement("td", null, totalDoughMass == null ? void 0 : totalDoughMass.toFixed(2))))));
+    return /* @__PURE__ */ import_react4.default.createElement("div", { className: totals_module_css_default.container }, /* @__PURE__ */ import_react4.default.createElement("h2", null, "Total Ingredients"), /* @__PURE__ */ import_react4.default.createElement("table", { className: totals_module_css_default.table }, /* @__PURE__ */ import_react4.default.createElement("tbody", null, /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("th", null), /* @__PURE__ */ import_react4.default.createElement("th", null, "Ingredient Name"), /* @__PURE__ */ import_react4.default.createElement("th", null, "Mass (", unit2, ")")), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("flourMass", flourMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("flourMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, flourMass == null ? void 0 : flourMass.toFixed(2))), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("waterMass", waterMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("waterMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, waterMass == null ? void 0 : waterMass.toFixed(2))), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("levainMass", levainMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("levainMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, levainMass == null ? void 0 : levainMass.toFixed(2))), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("saltMass", saltMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("saltMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, saltMass == null ? void 0 : saltMass.toFixed(2)))), /* @__PURE__ */ import_react4.default.createElement("tfoot", null, /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("totalDoughMass", totalDoughMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, "Total Dough"), /* @__PURE__ */ import_react4.default.createElement("td", null, totalDoughMass == null ? void 0 : totalDoughMass.toFixed(2))))));
   };
 
   // src/App.tsx
   var unit = "g";
   var App = () => {
-    const [limitingReagent, setLimitingReagent] = (0, import_react4.useState)({
+    const [limitingReagent, setLimitingReagent] = (0, import_react5.useState)({
       value: 2070,
       key: "totalDoughMass"
     });
-    const [ingredients, setIngredients] = (0, import_react4.useState)(emptyIngredients());
-    const [formula, setFormula] = (0, import_react4.useState)({
+    const [ingredients, setIngredients] = (0, import_react5.useState)(
+      emptyIngredients()
+    );
+    const [formula, setFormula] = (0, import_react5.useState)({
       hydrationPercent: 80,
       levainPercent: 25,
       saltPercent: 2
     });
-    const handleReagentChange = (0, import_react4.useCallback)((r, formula2) => {
+    const handleReagentChange = (0, import_react5.useCallback)((r, formula2) => {
       let newIngredients = emptyIngredients();
       if (!isValid(r.value)) {
         setIngredients(newIngredients);
@@ -21238,20 +21321,29 @@ input {
           newIngredients = applyFormula(formula2, r.value);
           break;
         case "levainMass":
-          newIngredients = applyFormula(formula2, getFlourMass(r.value, formula2.levainPercent));
+          newIngredients = applyFormula(
+            formula2,
+            getFlourMass(r.value, formula2.levainPercent)
+          );
           break;
         case "waterMass":
-          newIngredients = applyFormula(formula2, getFlourMass(r.value, formula2.hydrationPercent));
+          newIngredients = applyFormula(
+            formula2,
+            getFlourMass(r.value, formula2.hydrationPercent)
+          );
           break;
         case "saltMass":
-          newIngredients = applyFormula(formula2, getFlourMass(r.value, formula2.saltPercent));
+          newIngredients = applyFormula(
+            formula2,
+            getFlourMass(r.value, formula2.saltPercent)
+          );
           break;
         default:
           break;
       }
       setIngredients(newIngredients);
     }, []);
-    (0, import_react4.useEffect)(() => {
+    (0, import_react5.useEffect)(() => {
       const { key, value } = limitingReagent;
       if (!validateFormula(formula) || !isValid(value)) {
         setIngredients(emptyIngredients());
@@ -21259,10 +21351,10 @@ input {
         handleReagentChange({ key, value }, formula);
       }
     }, [formula, limitingReagent]);
-    return /* @__PURE__ */ import_react4.default.createElement("div", { className: app_module_css_default.main }, /* @__PURE__ */ import_react4.default.createElement("h1", null, "Calculoaf"), /* @__PURE__ */ import_react4.default.createElement("p", null, "A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa."), /* @__PURE__ */ import_react4.default.createElement(
+    return /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.main }, /* @__PURE__ */ import_react5.default.createElement("h1", null, "Calculoaf"), /* @__PURE__ */ import_react5.default.createElement("p", null, "A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa."), /* @__PURE__ */ import_react5.default.createElement(
       NumberInput,
       {
-        label: /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", { className: "fas fa-star" }), /* @__PURE__ */ import_react4.default.createElement("b", null, " ", getReagentLabel(limitingReagent.key), " Mass (", unit, ")")),
+        label: /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("span", { className: "fas fa-star" }), /* @__PURE__ */ import_react5.default.createElement("b", null, " ", getReagentLabel(limitingReagent.key), " Mass (", unit, ")")),
         id: "dough-mass",
         value: limitingReagent.value,
         min: 0,
@@ -21270,28 +21362,19 @@ input {
         precision: 0,
         setValue: (n) => setLimitingReagent((prev) => ({ key: prev.key, value: n }))
       }
-    ), /* @__PURE__ */ import_react4.default.createElement("div", { className: app_module_css_default.forms }, /* @__PURE__ */ import_react4.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react4.default.createElement(
+    ), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.forms }, /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(
       TotalIngredients,
       {
         ingredients,
         setLimitingReagent,
         limitingReagent: limitingReagent.key
       }
-    )), /* @__PURE__ */ import_react4.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react4.default.createElement(
-      FormulaForm,
-      {
-        updateFormula: setFormula,
-        formula
-      }
-    ))));
+    )), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(FormulaForm, { updateFormula: setFormula, formula }))));
   };
 
   // src/index.tsx
   var container = document.querySelector("#app");
-  import_react_dom.default.render(
-    /* @__PURE__ */ import_react5.default.createElement(App, null),
-    container
-  );
+  import_react_dom.default.render(/* @__PURE__ */ import_react6.default.createElement(App, null), container);
 })();
 /*
 object-assign

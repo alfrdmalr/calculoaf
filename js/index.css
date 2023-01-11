@@ -1,0 +1,36 @@
+@import "https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;600;800&display=swap";
+
+/* src/styles/fonts.css */
+:root {
+  --font-primary: "Inconsolata", monospace;
+}
+b,
+strong {
+  font-weight: 600;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 800;
+}
+
+/* src/styles/base.css */
+html {
+  font-family: var(--font-primary);
+  color: var(--fg-primary);
+  background-color: var(--bg-primary);
+  font-size: 20px;
+  padding: 1rem;
+}
+
+/* src/styles/colors.css */
+:root {
+  --fg-focus: #8282f2;
+  --fg-primary: #d2d2d2;
+  --bg-primary: #2a2f2f;
+  --error: #f28282;
+}
+
+/* src/styles/index.css */
+/*# sourceMappingURL=index.css.map */

@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../src/styles/fonts.css", "../../src/styles/base.css", "../../src/styles/colors.css"],
+  "sourcesContent": ["@import url(\"https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;600;800&display=swap\");\n\n:root {\n  --font-primary: \"Inconsolata\", monospace;\n}\n\nb,\nstrong {\n  font-weight: 600;\n}\n\nh1,\nh2,\nh3,\nh4 {\n  font-weight: 800;\n}\n", "html {\n  font-family: var(--font-primary);\n  color: var(--fg-primary);\n  background-color: var(--bg-primary);\n  font-size: 20px;\n  padding: 1rem;\n}\n", ":root {\n  /* \n   * dark mode\n   */\n  --fg-focus: #8282f2;\n  --fg-primary: #d2d2d2;\n  --bg-primary: #2a2f2f;\n  --error: #f28282;\n\n  /*\n   * light mode\n  --fg-focus: #8282f2;\n  --fg-primary: #2a2f2f;\n  --bg-primary: #efffff;\n  */\n}\n"],
+  "mappings": ";;;AAEA;AACE;AAAA;AAGF;AAAA;AAEE;AAAA;AAGF;AAAA;AAAA;AAAA;AAIE;AAAA;;;ACfF;AACE;AACA;AACA;AACA;AACA;AAAA;;;ACLF;AAIE;AACA;AACA;AACA;AAAA;",
+  "names": []
+}
