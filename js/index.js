@@ -1101,7 +1101,7 @@
             var dispatcher = resolveDispatcher();
             return dispatcher.useCallback(callback, deps);
           }
-          function useMemo3(create, deps) {
+          function useMemo4(create, deps) {
             var dispatcher = resolveDispatcher();
             return dispatcher.useMemo(create, deps);
           }
@@ -1662,7 +1662,7 @@
           exports.useEffect = useEffect3;
           exports.useImperativeHandle = useImperativeHandle;
           exports.useLayoutEffect = useLayoutEffect;
-          exports.useMemo = useMemo3;
+          exports.useMemo = useMemo4;
           exports.useReducer = useReducer;
           exports.useRef = useRef;
           exports.useState = useState3;
@@ -20840,8 +20840,8 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     return !(n !== 0 && !n);
   }
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-I7WayzarAmXy/calculoaf/src/components/numberInput/numberInput.module.css.js
-  var digest = "bb37fda5d02eff8bde36176b613e6757545b920487ea6ce4988d82211ff7a751";
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-61037-LMVdWqQ4fStT/calculoaf/src/components/numberInput/numberInput.module.css.js
+  var digest = "92389ae6ad19fc0b2d6a875c95fc2357df28f7f8ad58ac4bb339c05fec3f72b1";
   var css = `input {
   background-color: var(--bg-primary);
   color: var(--fg-primary);
@@ -21036,11 +21036,11 @@ input:focus {
       },
       [formula, updateFormula]
     );
-    const unit2 = "%";
+    const unit = "%";
     return /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, /* @__PURE__ */ import_react2.default.createElement("h2", null, "Formula"), /* @__PURE__ */ import_react2.default.createElement(
       NumberInput,
       {
-        label: `Pre-Ferment (${unit2})`,
+        label: `Pre-Ferment (${unit})`,
         id: "pre-ferment-formula",
         value: levainPercent,
         setValue: (n) => updateFormulaParameter("levainPercent", n),
@@ -21052,7 +21052,7 @@ input:focus {
     ), /* @__PURE__ */ import_react2.default.createElement(
       NumberInput,
       {
-        label: `Hydration (${unit2})`,
+        label: `Hydration (${unit})`,
         id: "hydration",
         value: hydrationPercent,
         setValue: (n) => updateFormulaParameter("hydrationPercent", n),
@@ -21064,7 +21064,7 @@ input:focus {
     ), /* @__PURE__ */ import_react2.default.createElement(
       NumberInput,
       {
-        label: `Salt (${unit2})`,
+        label: `Salt (${unit})`,
         id: "salt",
         value: saltPercent,
         setValue: (n) => updateFormulaParameter("saltPercent", n),
@@ -21076,24 +21076,25 @@ input:focus {
     ));
   };
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-ZuMrJrhtR4qa/calculoaf/src/app.module.css.js
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-61037-cnrX43JX71Py/calculoaf/src/app.module.css.js
   var digest2 = "3f8162291e7a8a04f79eba08d7e81f4bc5f059e20f7e84cf611f308bbc55c3dc";
-  var css2 = `._main_1ylye_1 {
+  var css2 = `._main_14lq8_1 {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: start;
 }
 
-._forms_1ylye_8 {
+._forms_14lq8_8 {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: start;
   justify-content: space-evenly;
   width: 100%;
 }
 
-._formContainer_1ylye_16 {
+._formContainer_14lq8_17 {
   display: flex;
   flex-direction: column;
   align-items: start;
@@ -21115,7 +21116,7 @@ input {
       document.head.appendChild(el);
     }
   })();
-  var app_module_css_default = { "main": "_main_1ylye_1", "forms": "_forms_1ylye_8", "formContainer": "_formContainer_1ylye_16" };
+  var app_module_css_default = { "main": "_main_14lq8_1", "forms": "_forms_14lq8_8", "formContainer": "_formContainer_14lq8_17" };
 
   // src/types/formula.tsx
   var validateFormula = (f) => {
@@ -21134,6 +21135,100 @@ input {
   function validateIngredients(i) {
     return isValid(i.saltMass) && isValid(i.flourMass) && isValid(i.waterMass) && isValid(i.levainMass);
   }
+
+  // src/components/totalIngredients/index.tsx
+  var import_react3 = __toESM(require_react());
+
+  // src/types/reagent.tsx
+  function getReagentLabel(key) {
+    switch (key) {
+      case "totalDoughMass":
+        return "Total Dough";
+      case "flourMass":
+        return "Flour";
+      case "levainMass":
+        return "Levain";
+      case "waterMass":
+        return "Water";
+      case "saltMass":
+        return "Salt";
+    }
+  }
+
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-61037-y1FoDNJZKXH5/calculoaf/src/components/totalIngredients/totals.module.css.js
+  var digest3 = "893075b765c03649451e96329d44b8e882b0746aed76333b16dc4dbcdcd7db28";
+  var css3 = `._table_p7pvt_1 {
+  border-collapse: collapse;
+}
+
+._table_p7pvt_1 td:last-child {
+  text-align: end;
+}
+
+._table_p7pvt_1 tfoot tr:first-child td {
+  border-top: solid 2px var(--fg-primary);
+  padding-top: 0.25rem;
+}
+
+._table_p7pvt_1 tbody tr:last-child td {
+  padding-bottom: 0.25rem;
+}
+
+._table_p7pvt_1 td:last-child,
+th:last-child {
+  padding-left: 1rem;
+}
+
+._container_p7pvt_23 {
+  display: flex;
+  flex-direction: column;
+  justify-items: start;
+  align-items: center;
+}
+`;
+  (function() {
+    if (typeof document === "undefined") {
+      return;
+    }
+    if (!document.getElementById(digest3)) {
+      var el = document.createElement("style");
+      el.id = digest3;
+      el.textContent = css3;
+      document.head.appendChild(el);
+    }
+  })();
+  var totals_module_css_default = { "table": "_table_p7pvt_1", "container": "_container_p7pvt_23" };
+
+  // src/functions/getTotalMass.ts
+  function getTotalDoughMass(ingredients) {
+    const ingredientMasses = [
+      ingredients.levainMass,
+      ingredients.waterMass,
+      ingredients.saltMass,
+      ingredients.flourMass
+    ];
+    const total = ingredientMasses.reduce((acc, cur) => {
+      if (acc === null || cur === null) {
+        return null;
+      }
+      return acc + cur;
+    }, 0);
+    return total;
+  }
+
+  // src/components/totalIngredients/index.tsx
+  var TotalIngredients = (props) => {
+    const { ingredients } = props;
+    const { levainMass, flourMass, waterMass, saltMass } = ingredients;
+    const unit = "g";
+    const totalDoughMass = (0, import_react3.useMemo)(() => {
+      return getTotalDoughMass(ingredients);
+    }, [ingredients]);
+    return /* @__PURE__ */ import_react3.default.createElement("div", { className: totals_module_css_default.container }, /* @__PURE__ */ import_react3.default.createElement("h2", null, "Ingredient Totals"), /* @__PURE__ */ import_react3.default.createElement("table", { className: totals_module_css_default.table }, /* @__PURE__ */ import_react3.default.createElement("tbody", null, /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("th", null, "Ingredient Name"), /* @__PURE__ */ import_react3.default.createElement("th", null, "Mass (", unit, ")")), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("flourMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, flourMass == null ? void 0 : flourMass.toFixed(2))), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("waterMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, waterMass == null ? void 0 : waterMass.toFixed(2))), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("levainMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, levainMass == null ? void 0 : levainMass.toFixed(2))), /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, getReagentLabel("saltMass")), /* @__PURE__ */ import_react3.default.createElement("td", null, saltMass == null ? void 0 : saltMass.toFixed(2)))), /* @__PURE__ */ import_react3.default.createElement("tfoot", null, /* @__PURE__ */ import_react3.default.createElement("tr", null, /* @__PURE__ */ import_react3.default.createElement("td", null, "Total Dough"), /* @__PURE__ */ import_react3.default.createElement("td", null, totalDoughMass == null ? void 0 : totalDoughMass.toFixed(2))))));
+  };
+
+  // src/components/ingredientsForm/index.tsx
+  var import_react4 = __toESM(require_react());
 
   // src/functions/applyFormula.ts
   function getFlourMass(ingredientMass, ingredientPercent) {
@@ -21163,142 +21258,98 @@ input {
     return applyFormula(formula, flourMass);
   }
 
-  // src/components/totalIngredients/index.tsx
-  var import_react4 = __toESM(require_react());
-
-  // src/types/reagent.tsx
-  function getReagentLabel(key) {
-    switch (key) {
-      case "totalDoughMass":
-        return "Total Dough";
-      case "flourMass":
-        return "Flour";
-      case "levainMass":
-        return "Levain";
-      case "waterMass":
-        return "Water";
-      case "saltMass":
-        return "Salt";
-    }
-  }
-
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-jVBMWCFoIAUd/calculoaf/src/components/totalIngredients/totals.module.css.js
-  var digest3 = "1b9356ba963e3aabf7d2d29f31224cd303c0859143ab87934d5a9664b53005eb";
-  var css3 = `._table_1320a_1 {
-  border-collapse: collapse;
-}
-
-._table_1320a_1 td:last-child {
-  text-align: end;
-}
-
-._table_1320a_1 tfoot td {
-  border-top: solid 2px black;
-  padding-top: 1rem;
-}
-
-._table_1320a_1 td:nth-child(2),
-th:nth-child(2) {
-  padding-right: 1rem;
-}
-
-._container_1320a_19 {
-  display: flex;
-  flex-direction: column;
-  justify-items: start;
-  align-items: center;
-}
-`;
-  (function() {
-    if (typeof document === "undefined") {
-      return;
-    }
-    if (!document.getElementById(digest3)) {
-      var el = document.createElement("style");
-      el.id = digest3;
-      el.textContent = css3;
-      document.head.appendChild(el);
-    }
-  })();
-  var totals_module_css_default = { "table": "_table_1320a_1", "container": "_container_1320a_19" };
-
-  // src/components/button/index.tsx
-  var import_react3 = __toESM(require_react());
-
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-98490-UOADg174ryIC/calculoaf/src/components/button/button.module.css.js
-  var digest4 = "bdd8e54d6dcd4d8b7e83d823fe0c7949e5f98d050da34e8d5fa357b2223356ac";
-  var css4 = `._button_1spq1_1 {
-  background-color: var(--fg-primary);
-  color: var(--bg-primary);
-  border: 2px solid var(--fg-primary);
-  border-radius: 0.5rem;
-  margin: 0.25rem;
-  padding: 0.3rem;
-  font-family: var(--font-primary);
-  font-size: 18px;
-  cursor: pointer;
-}
-
-button:focus {
-  outline: 3px solid var(--fg-focus);
-  border-color: var(--fg-focus);
-}
-`;
-  (function() {
-    if (typeof document === "undefined") {
-      return;
-    }
-    if (!document.getElementById(digest4)) {
-      var el = document.createElement("style");
-      el.id = digest4;
-      el.textContent = css4;
-      document.head.appendChild(el);
-    }
-  })();
-  var button_module_css_default = { "button": "_button_1spq1_1" };
-
-  // src/components/button/index.tsx
-  var Button = (props) => {
-    const { children, onClick, disabled } = props;
-    return /* @__PURE__ */ import_react3.default.createElement("button", { className: button_module_css_default.button, disabled, onClick }, children);
-  };
-
-  // src/components/totalIngredients/index.tsx
-  var TotalIngredients = (props) => {
-    const { setLimitingReagent, limitingReagent, ingredients } = props;
+  // src/components/ingredientsForm/index.tsx
+  var IngredientsForm = (props) => {
+    const { updateIngredients, ingredients, formula } = props;
     const { levainMass, flourMass, waterMass, saltMass } = ingredients;
-    const unit2 = "g";
-    const reagentButton = (0, import_react4.useCallback)(
-      (key, value) => {
-        return null;
-        return /* @__PURE__ */ import_react4.default.createElement(
-          Button,
-          {
-            disabled: limitingReagent === key,
-            onClick: () => setLimitingReagent({ key, value })
-          },
-          /* @__PURE__ */ import_react4.default.createElement("span", { className: "fas fa-star" })
-        );
+    const unit = "g";
+    const adjustIngredients = (0, import_react4.useCallback)(
+      (i, getPercent, key) => {
+        if (!isValid(i) || !validateFormula(formula)) {
+          updateIngredients(__spreadProps(__spreadValues({}, emptyIngredients()), {
+            [key]: i
+          }));
+          return;
+        }
+        const percent = getPercent(formula);
+        const flour = getFlourMass(i, percent);
+        updateIngredients(applyFormula(formula, flour));
       },
-      [limitingReagent, setLimitingReagent]
+      [formula, updateIngredients]
+    );
+    const updateTDM = (0, import_react4.useCallback)(
+      (totalDoughMass2) => {
+        if (!isValid(totalDoughMass2) || !validateFormula(formula)) {
+          updateIngredients(emptyIngredients());
+          return;
+        }
+        updateIngredients(applyFormulaTDM(formula, totalDoughMass2));
+      },
+      [formula, updateIngredients]
     );
     const totalDoughMass = (0, import_react4.useMemo)(() => {
-      if (validateIngredients(ingredients)) {
-        return 0 + ingredients.levainMass + ingredients.flourMass + ingredients.saltMass + ingredients.waterMass;
-      } else {
-        return null;
-      }
+      return getTotalDoughMass(ingredients);
     }, [ingredients]);
-    return /* @__PURE__ */ import_react4.default.createElement("div", { className: totals_module_css_default.container }, /* @__PURE__ */ import_react4.default.createElement("h2", null, "Total Ingredients"), /* @__PURE__ */ import_react4.default.createElement("table", { className: totals_module_css_default.table }, /* @__PURE__ */ import_react4.default.createElement("tbody", null, /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("th", null), /* @__PURE__ */ import_react4.default.createElement("th", null, "Ingredient Name"), /* @__PURE__ */ import_react4.default.createElement("th", null, "Mass (", unit2, ")")), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("flourMass", flourMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("flourMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, flourMass == null ? void 0 : flourMass.toFixed(2))), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("waterMass", waterMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("waterMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, waterMass == null ? void 0 : waterMass.toFixed(2))), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("levainMass", levainMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("levainMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, levainMass == null ? void 0 : levainMass.toFixed(2))), /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("saltMass", saltMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, getReagentLabel("saltMass")), /* @__PURE__ */ import_react4.default.createElement("td", null, saltMass == null ? void 0 : saltMass.toFixed(2)))), /* @__PURE__ */ import_react4.default.createElement("tfoot", null, /* @__PURE__ */ import_react4.default.createElement("tr", null, /* @__PURE__ */ import_react4.default.createElement("td", null, reagentButton("totalDoughMass", totalDoughMass)), /* @__PURE__ */ import_react4.default.createElement("td", null, "Total Dough"), /* @__PURE__ */ import_react4.default.createElement("td", null, totalDoughMass == null ? void 0 : totalDoughMass.toFixed(2))))));
+    return /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("h2", null, "Ingredients"), /* @__PURE__ */ import_react4.default.createElement(
+      NumberInput,
+      {
+        label: `Pre-Ferment (${unit})`,
+        id: "pre-ferment",
+        value: levainMass,
+        setValue: (n) => adjustIngredients(n, (f) => f.levainPercent, "levainMass"),
+        enforceBounds: true,
+        precision: 2,
+        min: 0
+      }
+    ), /* @__PURE__ */ import_react4.default.createElement(
+      NumberInput,
+      {
+        label: `Water (${unit})`,
+        id: "water",
+        value: waterMass,
+        setValue: (n) => adjustIngredients(n, (f) => f.hydrationPercent, "waterMass"),
+        enforceBounds: true,
+        precision: 2,
+        min: 0
+      }
+    ), /* @__PURE__ */ import_react4.default.createElement(
+      NumberInput,
+      {
+        label: `Salt (${unit})`,
+        id: "salt",
+        value: saltMass,
+        setValue: (n) => adjustIngredients(n, (f) => f.saltPercent, "saltMass"),
+        enforceBounds: true,
+        precision: 2,
+        min: 0
+      }
+    ), /* @__PURE__ */ import_react4.default.createElement(
+      NumberInput,
+      {
+        label: `Flour (${unit})`,
+        id: "flour",
+        value: flourMass,
+        setValue: (n) => adjustIngredients(n, (_f) => 100, "flourMass"),
+        enforceBounds: true,
+        precision: 2,
+        min: 0
+      }
+    ), /* @__PURE__ */ import_react4.default.createElement(
+      NumberInput,
+      {
+        label: `Total Dough Mass (${unit})`,
+        id: "dough-mass",
+        value: totalDoughMass,
+        setValue: updateTDM,
+        min: 0,
+        enforceBounds: true,
+        precision: 0
+      }
+    ));
   };
 
   // src/App.tsx
-  var unit = "g";
   var App = () => {
-    const [limitingReagent, setLimitingReagent] = (0, import_react5.useState)({
-      value: 2070,
-      key: "totalDoughMass"
-    });
     const [ingredients, setIngredients] = (0, import_react5.useState)(
       emptyIngredients()
     );
@@ -21307,69 +21358,26 @@ button:focus {
       levainPercent: 25,
       saltPercent: 2
     });
-    const handleReagentChange = (0, import_react5.useCallback)((r, formula2) => {
-      let newIngredients = emptyIngredients();
-      if (!isValid(r.value)) {
-        setIngredients(newIngredients);
-        return;
-      }
-      switch (r.key) {
-        case "totalDoughMass":
-          newIngredients = applyFormulaTDM(formula2, r.value);
-          break;
-        case "flourMass":
-          newIngredients = applyFormula(formula2, r.value);
-          break;
-        case "levainMass":
-          newIngredients = applyFormula(
-            formula2,
-            getFlourMass(r.value, formula2.levainPercent)
-          );
-          break;
-        case "waterMass":
-          newIngredients = applyFormula(
-            formula2,
-            getFlourMass(r.value, formula2.hydrationPercent)
-          );
-          break;
-        case "saltMass":
-          newIngredients = applyFormula(
-            formula2,
-            getFlourMass(r.value, formula2.saltPercent)
-          );
-          break;
-        default:
-          break;
-      }
-      setIngredients(newIngredients);
-    }, []);
-    (0, import_react5.useEffect)(() => {
-      const { key, value } = limitingReagent;
-      if (!validateFormula(formula) || !isValid(value)) {
-        setIngredients(emptyIngredients());
-      } else {
-        handleReagentChange({ key, value }, formula);
-      }
-    }, [formula, limitingReagent]);
-    return /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.main }, /* @__PURE__ */ import_react5.default.createElement("h1", null, "Calculoaf"), /* @__PURE__ */ import_react5.default.createElement("p", null, "A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa."), /* @__PURE__ */ import_react5.default.createElement(
-      NumberInput,
+    const updateFormula = (0, import_react5.useCallback)(
+      (formula2) => {
+        setFormula(formula2);
+        if (validateFormula(formula2) && validateIngredients(ingredients)) {
+          const doughMass = getTotalDoughMass(ingredients);
+          if (doughMass !== null) {
+            setIngredients(applyFormulaTDM(formula2, doughMass));
+          }
+        }
+      },
+      [ingredients, setIngredients]
+    );
+    return /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.main }, /* @__PURE__ */ import_react5.default.createElement("h1", null, "Calculoaf"), /* @__PURE__ */ import_react5.default.createElement("p", null, "A simple tool for adjusting bread formulas based on ingredient measurements, or vice versa."), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.forms }, /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(
+      IngredientsForm,
       {
-        label: /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, /* @__PURE__ */ import_react5.default.createElement("span", { className: "fas fa-star" }), /* @__PURE__ */ import_react5.default.createElement("b", null, " ", getReagentLabel(limitingReagent.key), " Mass (", unit, ")")),
-        id: "dough-mass",
-        value: limitingReagent.value,
-        min: 0,
-        enforceBounds: true,
-        precision: 0,
-        setValue: (n) => setLimitingReagent((prev) => ({ key: prev.key, value: n }))
-      }
-    ), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.forms }, /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(
-      TotalIngredients,
-      {
+        formula,
         ingredients,
-        setLimitingReagent,
-        limitingReagent: limitingReagent.key
+        updateIngredients: setIngredients
       }
-    )), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(FormulaForm, { updateFormula: setFormula, formula }))));
+    )), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(FormulaForm, { updateFormula, formula }))), /* @__PURE__ */ import_react5.default.createElement("div", { className: app_module_css_default.formContainer }, /* @__PURE__ */ import_react5.default.createElement(TotalIngredients, { ingredients })));
   };
 
   // src/index.tsx
