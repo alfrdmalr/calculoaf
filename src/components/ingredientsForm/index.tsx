@@ -1,5 +1,10 @@
-import React, { useCallback } from "react";
-import { applyFormula, getFlourMass } from "../../functions/applyFormula";
+import React, { useCallback, useMemo } from "react";
+import {
+  applyFormula,
+  applyFormulaTDM,
+  getFlourMass,
+} from "../../functions/applyFormula";
+import { getTotalDoughMass } from "../../functions/getTotalMass";
 import { Formula, validateFormula } from "../../types/formula";
 import { emptyIngredients, Ingredients } from "../../types/ingredients";
 import { Nullable } from "../../types/nullable";
@@ -40,6 +45,21 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
     },
     [formula, updateIngredients]
   );
+
+  const updateTDM = useCallback(
+    (totalDoughMass: Numberish) => {
+      if (!isValid(totalDoughMass) || !validateFormula(formula)) {
+        updateIngredients(emptyIngredients());
+        return;
+      }
+      updateIngredients(applyFormulaTDM(formula, totalDoughMass));
+    },
+    [formula, updateIngredients]
+  );
+
+  const totalDoughMass: Numberish = useMemo(() => {
+    return getTotalDoughMass(ingredients);
+  }, [ingredients]);
 
   return (
     <>
@@ -83,6 +103,15 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         enforceBounds
         precision={2}
         min={0}
+      />
+      <NumberInput
+        label={`Total Dough Mass (${unit})`}
+        id={"dough-mass"}
+        value={totalDoughMass}
+        setValue={updateTDM}
+        min={0}
+        enforceBounds
+        precision={0}
       />
     </>
   );
