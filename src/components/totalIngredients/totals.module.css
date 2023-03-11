@@ -6,14 +6,18 @@
   text-align: end;
 }
 
-.table tfoot td {
-  border-top: solid 2px black;
-  padding-top: 1rem;
+.table tfoot tr:first-child td {
+  border-top: solid 2px var(--fg-primary);
+  padding-top: 0.25rem;
 }
 
-.table td:nth-child(2),
-th:nth-child(2) {
-  padding-right: 1rem;
+.table tbody tr:last-child td {
+  padding-bottom: 0.25rem;
+}
+
+.table td:last-child,
+th:last-child {
+  padding-left: 1rem;
 }
 
 .container {
