@@ -3,6 +3,7 @@
     "start": "npm run serve",
     "serve": "node serve.js",
     "build": "node build.js",
+    "tsc": "tsc --noemit",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "format": "prettier --write --cache ."
