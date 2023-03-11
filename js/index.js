@@ -20840,7 +20840,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
     return !(n !== 0 && !n);
   }
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-61037-LMVdWqQ4fStT/calculoaf/src/components/numberInput/numberInput.module.css.js
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-4801-zmMtcqj57frD/calculoaf/src/components/numberInput/numberInput.module.css.js
   var digest = "92389ae6ad19fc0b2d6a875c95fc2357df28f7f8ad58ac4bb339c05fec3f72b1";
   var css = `input {
   background-color: var(--bg-primary);
@@ -21076,7 +21076,7 @@ input:focus {
     ));
   };
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-61037-cnrX43JX71Py/calculoaf/src/app.module.css.js
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-4801-UAQaowfPsVIs/calculoaf/src/app.module.css.js
   var digest2 = "3f8162291e7a8a04f79eba08d7e81f4bc5f059e20f7e84cf611f308bbc55c3dc";
   var css2 = `._main_14lq8_1 {
   display: flex;
@@ -21155,7 +21155,7 @@ input {
     }
   }
 
-  // esbuild-css-modules-plugin-namespace:/tmp/tmp-61037-y1FoDNJZKXH5/calculoaf/src/components/totalIngredients/totals.module.css.js
+  // esbuild-css-modules-plugin-namespace:/tmp/tmp-4801-8J9CVzP5BBaY/calculoaf/src/components/totalIngredients/totals.module.css.js
   var digest3 = "893075b765c03649451e96329d44b8e882b0746aed76333b16dc4dbcdcd7db28";
   var css3 = `._table_p7pvt_1 {
   border-collapse: collapse;
