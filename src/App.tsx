@@ -16,25 +16,31 @@ import { getTotalDoughMass } from "./functions/getTotalMass";
 const unit: string = "g";
 
 export const App = () => {
-  const [ingredients, setIngredients] = useState<Nullable<Ingredients>>(
-    emptyIngredients()
-  );
   const [formula, setFormula] = useState<Nullable<Formula>>({
     hydrationPercent: 80,
     levainPercent: 25,
     saltPercent: 2,
+    mixins: [],
   });
+  const [ingredients, setIngredients] = useState<Nullable<Ingredients>>(
+    emptyIngredients(formula)
+  );
 
   const updateFormula = useCallback(
     (formula: Nullable<Formula>) => {
       setFormula(formula);
-      if (validateFormula(formula) && validateIngredients(ingredients)) {
-        // TODO using dough mass, but should allow user to hold an arbitrary
-        // ingredient constant
-        const doughMass = getTotalDoughMass(ingredients);
-        if (doughMass !== null) {
-          setIngredients(applyFormulaTDM(formula, doughMass));
-        }
+      // make sure ingredients schema matches formula
+      setIngredients(emptyIngredients(formula));
+
+      if (!validateFormula(formula) || !validateIngredients(ingredients)) {
+        return;
+      }
+
+      // TODO using dough mass, but should allow user to hold an arbitrary
+      // ingredient constant
+      const doughMass = getTotalDoughMass(ingredients);
+      if (doughMass !== null) {
+        setIngredients(applyFormulaTDM(formula, doughMass));
       }
     },
     [ingredients, setIngredients]

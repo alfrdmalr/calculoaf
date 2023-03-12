@@ -33,7 +33,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
     ) => {
       if (!isValid(i) || !validateFormula(formula)) {
         updateIngredients({
-          ...emptyIngredients(),
+          ...emptyIngredients(formula),
           [key]: i,
         });
         return;
@@ -49,10 +49,29 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
   const updateTDM = useCallback(
     (totalDoughMass: Numberish) => {
       if (!isValid(totalDoughMass) || !validateFormula(formula)) {
-        updateIngredients(emptyIngredients());
+        updateIngredients(emptyIngredients(formula));
         return;
       }
       updateIngredients(applyFormulaTDM(formula, totalDoughMass));
+    },
+    [formula, updateIngredients]
+  );
+
+  const updateMixins = useCallback(
+    (i: Numberish, id: string) => {
+      if (!isValid(i) || !validateFormula(formula)) {
+        //TODO handle invalid case
+        updateIngredients({
+          ...emptyIngredients(formula),
+        });
+        return;
+      }
+
+      // TODO disallow nullable percentages
+      const percent: number =
+        formula.mixins.find((m) => m.name === id)?.percentage ?? 0;
+      const flour: number = getFlourMass(i, percent);
+      updateIngredients(applyFormula(formula, flour));
     },
     [formula, updateIngredients]
   );
@@ -104,6 +123,20 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         precision={2}
         min={0}
       />
+      {ingredients.mixins?.map((mixin, i) => (
+        <NumberInput
+          key={`inclusion-${i}`}
+          label={`${mixin.name} (${unit})`}
+          id={mixin.name}
+          value={mixin.mass}
+          setValue={(n) => updateMixins(n, mixin.name)}
+          required
+          enforceBounds
+          min={0}
+          max={100}
+          precision={2}
+        />
+      ))}
       <NumberInput
         label={`Total Dough Mass (${unit})`}
         id={"dough-mass"}
@@ -111,7 +144,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         setValue={updateTDM}
         min={0}
         enforceBounds
-        precision={0}
+        precision={2}
       />
     </>
   );

@@ -1,7 +1,9 @@
 import { Ingredients } from "./ingredients";
 import { Numberish } from "./numberish";
 
-export type ReagentType = keyof Ingredients | "totalDoughMass";
+export type ReagentType =
+  | Exclude<keyof Ingredients, "mixins">
+  | "totalDoughMass";
 
 export type Reagent = {
   value: Numberish;
