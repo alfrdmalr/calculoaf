@@ -2,7 +2,7 @@ import { Ingredients } from "./ingredients";
 import { Numberish } from "./numberish";
 
 export type ReagentType =
-  | Exclude<keyof Ingredients, "mixins">
+  | Exclude<keyof Ingredients, "inclusions">
   | "totalDoughMass";
 
 export type Reagent = {

@@ -10,12 +10,12 @@ export interface Ingredients {
 
   /*
   flourComposition?: FlourComposition;
-  mixins?: 
+  inclusions?: 
    */
-  mixins: Mixin[];
+  inclusions: Inclusion[];
 }
 
-export type Mixin = {
+export type Inclusion = {
   name: string;
   mass: number | null;
 };
@@ -28,9 +28,9 @@ export function emptyIngredients(
     flourMass: null,
     waterMass: null,
     saltMass: null,
-    mixins:
-      formula.mixins?.map((mixin) => ({
-        name: mixin.name,
+    inclusions:
+      formula.inclusions?.map((inclusion) => ({
+        name: inclusion.name,
         mass: null,
       })) ?? [],
   };
@@ -39,8 +39,8 @@ export function emptyIngredients(
 export function validateIngredients(
   i: Nullable<Ingredients>
 ): i is Ingredients {
-  const allMixinsValid: boolean = (i.mixins ?? []).reduce(
-    (acc: boolean, cur: Mixin) => isValid(cur.mass) && acc,
+  const allInclusionsValid: boolean = (i.inclusions ?? []).reduce(
+    (acc: boolean, cur: Inclusion) => isValid(cur.mass) && acc,
     true
   );
   return (
@@ -49,6 +49,6 @@ export function validateIngredients(
     isValid(i.flourMass) &&
     isValid(i.waterMass) &&
     isValid(i.levainMass) &&
-    allMixinsValid
+    allInclusionsValid
   );
 }

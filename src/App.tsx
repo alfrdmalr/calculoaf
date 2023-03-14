@@ -20,7 +20,7 @@ export const App = () => {
     hydrationPercent: 80,
     levainPercent: 25,
     saltPercent: 2,
-    mixins: [],
+    inclusions: [],
   });
   const [ingredients, setIngredients] = useState<Nullable<Ingredients>>(
     emptyIngredients(formula)

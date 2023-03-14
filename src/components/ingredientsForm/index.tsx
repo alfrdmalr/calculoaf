@@ -57,7 +57,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
     [formula, updateIngredients]
   );
 
-  const updateMixins = useCallback(
+  const updateInclusions = useCallback(
     (i: Numberish, id: string) => {
       if (!isValid(i) || !validateFormula(formula)) {
         //TODO handle invalid case
@@ -69,7 +69,7 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
 
       // TODO disallow nullable percentages
       const percent: number =
-        formula.mixins.find((m) => m.name === id)?.percentage ?? 0;
+        formula.inclusions.find((m) => m.name === id)?.percentage ?? 0;
       const flour: number = getFlourMass(i, percent);
       updateIngredients(applyFormula(formula, flour));
     },
@@ -123,13 +123,13 @@ export const IngredientsForm = (props: IngredientsFormProps) => {
         precision={2}
         min={0}
       />
-      {ingredients.mixins?.map((mixin, i) => (
+      {ingredients.inclusions?.map((inclusion, i) => (
         <NumberInput
           key={`inclusion-${i}`}
-          label={`${mixin.name} (${unit})`}
-          id={mixin.name}
-          value={mixin.mass}
-          setValue={(n) => updateMixins(n, mixin.name)}
+          label={`${inclusion.name} (${unit})`}
+          id={inclusion.name}
+          value={inclusion.mass}
+          setValue={(n) => updateInclusions(n, inclusion.name)}
           required
           enforceBounds
           min={0}

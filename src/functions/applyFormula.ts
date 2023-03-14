@@ -1,5 +1,5 @@
 import { Formula } from "../types/formula";
-import { Ingredients, Mixin } from "../types/ingredients";
+import { Ingredients, Inclusion } from "../types/ingredients";
 
 export function getFlourMass(
   ingredientMass: number,
@@ -17,13 +17,13 @@ export function applyFormula(formula: Formula, flourMass: number): Ingredients {
   const saltMass = flourMass * saltDecimal;
   const levainMass = flourMass * levainDecimal;
   const waterMass = flourMass * hydrationDecimal; // - (preFermentMass / 2); // not strictly true since the levain has some water
-  const mixins: Mixin[] =
-    formula.mixins?.map((mixin) => {
+  const inclusions: Inclusion[] =
+    formula.inclusions?.map((inclusion) => {
       // TODO formal Formula type should disabllow nullable percentages
-      const mixinDecimal = (mixin.percentage ?? 0) / 100;
+      const inclusionDecimal = (inclusion.percentage ?? 0) / 100;
       return {
-        name: mixin.name,
-        mass: flourMass * mixinDecimal,
+        name: inclusion.name,
+        mass: flourMass * inclusionDecimal,
       };
     }) ?? [];
 
@@ -32,7 +32,7 @@ export function applyFormula(formula: Formula, flourMass: number): Ingredients {
     levainMass,
     flourMass,
     waterMass,
-    mixins,
+    inclusions,
   };
 }
 

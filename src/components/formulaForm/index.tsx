@@ -14,26 +14,28 @@ export const FormulaForm = (props: FormulaFormProps) => {
   const { updateFormula, formula } = props;
   const { hydrationPercent, levainPercent, saltPercent } = formula;
 
-  const updateFormulaMixin = useCallback(
+  const updateFormulaInclusion = useCallback(
     (id: string, n: Numberish) => {
-      let mixins = formula.mixins?.slice();
-      if (!mixins || mixins.length <= 0) {
-        // no mixins to update
-        console.error(`tried to update mixin ${id} but no mixins in formula`);
+      let inclusions = formula.inclusions?.slice();
+      if (!inclusions || inclusions.length <= 0) {
+        // no inclusions to update
+        console.error(
+          `tried to update inclusion ${id} but no inclusions in formula`
+        );
         return;
       }
-      const index = mixins.findIndex((m) => m.name === id);
+      const index = inclusions.findIndex((m) => m.name === id);
       if (index < 0) {
-        return `No mixin with name '${id}'`;
+        return `No inclusion with name '${id}'`;
       }
-      mixins[index] = {
-        ...mixins[index],
+      inclusions[index] = {
+        ...inclusions[index],
         percentage: n,
       };
 
       const f: Nullable<Formula> = {
         ...formula,
-        mixins: mixins,
+        inclusions: inclusions,
       };
 
       updateFormula(f);
@@ -88,13 +90,13 @@ export const FormulaForm = (props: FormulaFormProps) => {
         min={0}
         max={100}
       />
-      {formula.mixins?.map((mixin, i) => (
+      {formula.inclusions?.map((inclusion, i) => (
         <NumberInput
           key={`inclusion-${i}`}
-          label={`${mixin.name} (${unit})`}
-          id={mixin.name}
-          value={mixin.percentage}
-          setValue={(n) => updateFormulaMixin(mixin.name, n)}
+          label={`${inclusion.name} (${unit})`}
+          id={inclusion.name}
+          value={inclusion.percentage}
+          setValue={(n) => updateFormulaInclusion(inclusion.name, n)}
           required
           enforceBounds
           min={0}
@@ -106,10 +108,10 @@ export const FormulaForm = (props: FormulaFormProps) => {
         onClick={() => {
           updateFormula({
             ...formula,
-            mixins: [
-              ...(formula?.mixins ?? []),
+            inclusions: [
+              ...(formula?.inclusions ?? []),
               {
-                name: `Mixin ${(formula.mixins?.length ?? 0) + 1}`,
+                name: `Inclusion ${(formula.inclusions?.length ?? 0) + 1}`,
                 percentage: 0,
               },
             ],
